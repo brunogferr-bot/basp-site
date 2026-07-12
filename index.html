@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASP Representa&ccedil;&otilde;es &mdash; Mobili&aacute;rio de Alto Padr&atilde;o | MG &middot; GO &middot; DF</title>
+<meta name="description" content="H&aacute; mais de uma d&eacute;cada conectando as melhores f&aacute;bricas de mobili&aacute;rio premium do Brasil a lojistas e especificadores em Minas Gerais, Goi&aacute;s e Distrito Federal.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jura:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0b09;--ivory:#f5f0e8;--gold:#d2af78;--gold-light:#e8d5a3;--gold-dark:#a8853a;--muted:rgba(245,240,232,0.55);--line:rgba(210,175,120,0.22);--radius:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ivory);font-family:Jura,sans-serif;overflow-x:hidden;line-height:1.6}
+.serif{font-family:Italiana,serif}
+.editorial{font-family:"Crimson Pro",serif;font-style:italic}
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:.28;animation:float 22s ease-in-out infinite alternate}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(210,175,120,.5),transparent 70%);top:-160px;left:-140px}
+.orb2{width:560px;height:560px;background:radial-gradient(circle,rgba(168,133,58,.4),transparent 70%);bottom:-200px;right:-160px;animation-delay:-8s}
+@keyframes float{from{transform:translate(0,0)}to{transform:translate(50px,-36px)}}
+main,nav,footer{position:relative;z-index:1}
+nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:18px min(6vw,60px);background:rgba(13,11,9,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nav-logo{font-family:Italiana,serif;font-size:26px;letter-spacing:.3em;color:var(--ivory);text-decoration:none}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:.18em;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--gold-light)}
+.btn{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(210,175,120,.45);border-radius:var(--radius);background:linear-gradient(135deg,rgba(210,175,120,.16),rgba(210,175,120,.04));color:var(--gold-light);text-decoration:none;font-family:Jura,sans-serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;padding:14px 26px;transition:all .3s}
+.btn:hover{background:linear-gradient(135deg,rgba(210,175,120,.3),rgba(210,175,120,.1));transform:scale(1.035);box-shadow:0 10px 34px rgba(210,175,120,.16)}
+section{padding:110px min(6vw,60px)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:140px}
+.hero-kicker{font-size:13px;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);margin-bottom:26px;opacity:0;animation:up 1s ease .2s forwards}
+.hero h1{font-family:Italiana,serif;font-weight:400;font-size:clamp(42px,7.5vw,92px);line-height:1.08;letter-spacing:.04em;max-width:1000px;opacity:0;animation:up 1.1s ease .45s forwards}
+.hero h1 em{font-family:"Crimson Pro",serif;font-style:italic;color:var(--gold-light)}
+.hero p{margin-top:28px;max-width:620px;color:var(--muted);font-size:17px;opacity:0;animation:up 1.1s ease .75s forwards}
+.hero .btn{margin-top:44px;opacity:0;animation:up 1.1s ease 1.05s forwards}
+.hero-line{width:1px;height:90px;background:linear-gradient(to bottom,var(--gold),transparent);margin-top:70px;opacity:0;animation:up 1.2s ease 1.3s forwards}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+.kicker{font-size:12px;letter-spacing:.44em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+h2{font-family:Italiana,serif;font-weight:400;font-size:clamp(32px,4.6vw,54px);letter-spacing:.05em;margin-bottom:18px}
+.section-sub{color:var(--muted);max-width:640px;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:0;margin:0 min(6vw,60px)}
+.stat{background:var(--bg);padding:46px 24px;text-align:center}
+.stat b{display:block;font-family:Italiana,serif;font-weight:400;font-size:clamp(38px,4.5vw,56px);color:var(--gold-light);line-height:1}
+.stat span{display:block;margin-top:10px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:46px}
+.brand{border:1px solid var(--line);border-radius:var(--radius);padding:30px 18px;text-align:center;font-family:Italiana,serif;font-size:20px;letter-spacing:.12em;color:var(--ivory);transition:all .35s;background:rgba(245,240,232,.02)}
+.brand:hover{border-color:rgba(210,175,120,.55);color:var(--gold-light);transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.4)}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:46px}
+.card{border:1px solid var(--line);border-radius:var(--radius);padding:38px 30px;background:rgba(245,240,232,.025);backdrop-filter:blur(10px)}
+.card h3{font-family:Italiana,serif;font-weight:400;font-size:26px;letter-spacing:.08em;margin-bottom:12px;color:var(--gold-light)}
+.card p{color:var(--muted);font-size:15px}
+.card .tag{display:inline-block;margin-top:18px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line);border-radius:20px;padding:6px 14px}
+.contact{text-align:center}
+.contact .btn{margin-top:30px}
+.contact-note{margin-top:22px;color:var(--muted);font-size:14px}
+footer{border-top:1px solid var(--line);padding:34px min(6vw,60px);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px;letter-spacing:.08em}
+footer .serif{font-size:20px;letter-spacing:.3em;color:var(--ivory)}
+footer .serif span{color:var(--gold)}
+@media(max-width:760px){.nav-links a:not(.btn){display:none}section{padding:80px 20px}.stats{margin:0 20px}}
+</style>
+</head>
+<body>
+<div class="ambient"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+<nav>
+  <a class="nav-logo" href="#">BASP<span>.</span></a>
+  <div class="nav-links">
+    <a href="#marcas">Marcas</a>
+    <a href="#atuacao">Atua&ccedil;&atilde;o</a>
+    <a href="#sobre">A BASP</a>
+    <a class="btn" href="#contato">Fale Conosco</a>
+  </div>
+</nav>
+<main>
+<section class="hero">
+  <div class="hero-kicker">Representa&ccedil;&otilde;es Comerciais &middot; Desde 2014</div>
+  <h1>Mobili&aacute;rio de alto padr&atilde;o para projetos que <em>exigem excel&ecirc;ncia</em></h1>
+  <p>Conectamos as melhores f&aacute;bricas de mobili&aacute;rio premium do Brasil a lojistas e especificadores em Minas Gerais, Goi&aacute;s e Distrito Federal &mdash; com curadoria, presen&ccedil;a em campo e relacionamento de longo prazo.</p>
+  <a class="btn" href="#contato">Conhe&ccedil;a nosso portf&oacute;lio</a>
+  <div class="hero-line"></div>
+</section>
+<div class="stats">
+  <div class="stat"><b>16</b><span>Marcas premium</span></div>
+  <div class="stat"><b>3</b><span>Estados atendidos</span></div>
+  <div class="stat"><b>10+</b><span>Anos de mercado</span></div>
+  <div class="stat"><b>1</b><span>Padr&atilde;o: excel&ecirc;ncia</span></div>
+</div>
+<section id="marcas">
+  <div class="kicker">Portf&oacute;lio</div>
+  <h2>Marcas que representamos</h2>
+  <p class="section-sub">Uma curadoria de f&aacute;bricas selecionadas pela qualidade de fabrica&ccedil;&atilde;o, design e compromisso com prazos &mdash; do mobili&aacute;rio residencial de luxo ao corporativo de alto padr&atilde;o.</p>
+  <div class="brand-grid">
+    <div class="brand">YBY Design</div><div class="brand">Arbosso</div><div class="brand">Ariadne</div><div class="brand">Artferr</div>
+    <div class="brand">Artimage</div><div class="brand">Vondom</div><div class="brand">Denta</div><div class="brand">Detagli</div>
+    <div class="brand">Faruk</div><div class="brand">Ferrari</div><div class="brand">Gobba</div><div class="brand">Greice</div>
+    <div class="brand">Linea Top</div><div class="brand">Via Star</div><div class="brand">Villa Imperial</div><div class="brand">OTTO Mobili&aacute;ria Corporativa</div>
+  </div>
+</section>
+<section id="atuacao">
+  <div class="kicker">Como trabalhamos</div>
+  <h2>Presen&ccedil;a em campo, vis&atilde;o de neg&oacute;cio</h2>
+  <p class="section-sub">Mais do que apresentar cat&aacute;logos, constru&iacute;mos pontes duradouras entre f&aacute;bricas e o varejo especializado.</p>
+  <div class="split">
+    <div class="card"><h3>Para lojistas</h3><p>Acesso direto &agrave;s cole&ccedil;&otilde;es mais desejadas do mobili&aacute;rio premium brasileiro, com atendimento consultivo, treinamento de equipes e suporte comercial cont&iacute;nuo.</p><span class="tag">Varejo especializado</span></div>
+    <div class="card"><h3>Para especificadores</h3><p>Apoio t&eacute;cnico a arquitetos e designers de interiores na especifica&ccedil;&atilde;o de mobili&aacute;rio para projetos residenciais e corporativos de alto padr&atilde;o.</p><span class="tag">Arquitetura &amp; Design</span></div>
+    <div class="card"><h3>Para f&aacute;bricas</h3><p>Representa&ccedil;&atilde;o comercial profissional em Minas Gerais, Goi&aacute;s e Distrito Federal, com rotas estruturadas, metas claras e relacionamento de longo prazo.</p><span class="tag">MG &middot; GO &middot; DF</span></div>
+  </div>
+</section>
+<section id="sobre">
+  <div class="kicker">A BASP</div>
+  <h2>Uma d&eacute;cada construindo confian&ccedil;a</h2>
+  <p class="section-sub">Fundada em 2014 em Uberl&acirc;ndia (MG), a BASP Representa&ccedil;&otilde;es nasceu da convic&ccedil;&atilde;o de que representar uma marca &eacute; cuidar dela como se fosse pr&oacute;pria. Hoje, percorremos tr&ecirc;s estados levando o melhor do mobili&aacute;rio brasileiro a quem transforma espa&ccedil;os em experi&ecirc;ncias.</p>
+</section>
+<section id="contato" class="contact">
+  <div class="kicker">Contato</div>
+  <h2>Vamos conversar sobre o seu projeto</h2>
+  <p class="section-sub" style="margin:0 auto">Atendemos lojistas, especificadores e f&aacute;bricas em Minas Gerais, Goi&aacute;s e Distrito Federal.</p>
+  <a class="btn" href="mailto:contato@basp.com.br">contato@basp.com.br</a>
+  <p class="contact-note">Uberl&acirc;ndia &middot; Minas Gerais &middot; Brasil</p>
+</section>
+</main>
+<footer>
+  <div class="serif">BASP<span>.</span></div>
+  <div>BASP Representa&ccedil;&otilde;es &copy; 2014&ndash;2026 &middot; Mobili&aacute;rio de alto padr&atilde;o &middot; MG &middot; GO &middot; DF</div>
+</footer>
+</body>
+</html>

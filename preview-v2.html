@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASP — A Omissão do Excesso</title>
+<meta name="description" content="Mobiliário de alto padrão. Onde a engenharia encontra o silêncio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- GSAP: transições cinemáticas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+/* ============================================================
+   BASP — SITE V2 "A OMISSÃO DO EXCESSO"
+   Design system: brutalismo de engenharia para o luxo
+   ============================================================ */
+:root{
+  --void:#0D0D0D;            /* fundo profundo */
+  --bone:#F2EFE9;            /* off-white cirúrgico */
+  --titanium:#8A8A85;        /* cinza titânio */
+  --line:rgba(242,239,233,0.09);        /* linha estrutural 1px */
+  --line-strong:rgba(242,239,233,0.26);
+  --gold:#C8A96E;            /* único acento: a marca BASP */
+  --mono:'Space Mono',monospace;
+  --serif:'Cormorant Garamond',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--bone);font-family:var(--serif);
+  overflow-x:hidden;cursor:crosshair;
+}
+::selection{background:var(--bone);color:var(--void)}
+
+/* ===== GRID ESTRUTURAL DE FUNDO (1px) ===== */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 90px),
+    repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 90px);
+}
+
+/* ===== RÉGUAS DE ESCALA NAS 4 BORDAS ===== */
+.ruler{position:fixed;z-index:40;pointer-events:none;font-family:var(--mono);font-size:8px;color:var(--titanium);letter-spacing:.06em}
+.ruler-top{top:0;left:0;right:0;height:22px;border-bottom:1px solid var(--line)}
+.ruler-bottom{bottom:0;left:0;right:0;height:22px;border-top:1px solid var(--line)}
+.ruler-left{top:0;bottom:0;left:0;width:22px;border-right:1px solid var(--line)}
+.ruler-right{top:0;bottom:0;right:0;width:22px;border-left:1px solid var(--line)}
+.tick{position:absolute;background:var(--line-strong)}
+.ruler-top .tick,.ruler-bottom .tick{width:1px;height:6px;bottom:0}
+.ruler-top .tick{top:auto;bottom:0}.ruler-bottom .tick{top:0}
+.ruler-left .tick,.ruler-right .tick{height:1px;width:6px}
+.ruler-left .tick{right:0}.ruler-right .tick{left:0}
+.tick-label{position:absolute;transform:translateX(-50%)}
+.ruler-top .tick-label{top:3px}.ruler-bottom .tick-label{bottom:3px}
+.ruler-left .tick-label,.ruler-right .tick-label{transform:rotate(90deg);transform-origin:left top;white-space:nowrap}
+
+/* ===== HUD ===== */
+.hud{position:fixed;z-index:50;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--titanium)}
+#hud-coords{bottom:32px;left:34px}
+#hud-axis{bottom:32px;right:34px;text-align:right}
+.hud-controls{top:32px;right:34px;display:flex;gap:10px}
+.hud-btn{
+  font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--titanium);
+  background:transparent;border:1px solid var(--line-strong);padding:8px 14px;cursor:pointer;
+  transition:all .25s;text-transform:uppercase;
+}
+.hud-btn:hover,.hud-btn.on{color:var(--void);background:var(--bone);border-color:var(--bone)}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:22px;left:22px;right:22px;z-index:45;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 12px;border-bottom:1px solid var(--line);
+  background:linear-gradient(to bottom, rgba(13,13,13,.92), rgba(13,13,13,0));
+}
+.nav-brand{font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:.28em;color:var(--gold);text-decoration:none}
+.nav-meta{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--titanium);text-transform:uppercase}
+@media(max-width:640px){.nav-meta{display:none}}
+
+section{position:relative;z-index:1;padding:0 clamp(34px,7vw,110px)}
+
+/* ===== HERO ===== */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:120px;padding-bottom:80px}
+.kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--titanium);text-transform:uppercase;margin-bottom:34px}
+.kicker::before{content:"";display:inline-block;width:34px;height:1px;background:var(--line-strong);vertical-align:middle;margin-right:14px}
+h1{
+  font-family:var(--serif);font-weight:300;font-size:clamp(52px,9.5vw,128px);
+  line-height:.96;letter-spacing:-0.01em;max-width:12ch;
+}
+h1 em{font-style:italic;font-weight:300}
+.hero-text{
+  max-width:560px;margin-top:44px;font-size:clamp(16px,1.6vw,19px);
+  font-weight:400;line-height:1.75;color:rgba(242,239,233,0.72);
+}
+.hero-text strong{font-weight:500;color:var(--bone)}
+
+/* ===== METADADOS (scramble) ===== */
+.meta-strip{
+  margin-top:70px;display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.meta-item{
+  flex:1 1 300px;padding:16px 18px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.1em;color:var(--titanium);border-right:1px solid var(--line);
+  cursor:default;transition:color .3s;min-height:52px;display:flex;align-items:center;
+}
+.meta-item:last-child{border-right:none}
+.meta-item:hover{color:var(--bone)}
+
+/* ===== OBJETO ===== */
+#objeto{padding-top:110px;padding-bottom:90px;border-top:1px solid var(--line)}
+.obj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:14px}
+h2{font-family:var(--serif);font-weight:300;font-size:clamp(34px,5vw,64px);line-height:1.04}
+.obj-sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--titanium);margin-top:12px}
+.obj-controls{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ===== VISUALIZADOR WIPE ===== */
+.viewer-wrap{position:relative;margin-top:44px}
+.viewer-stage{
+  position:relative;margin:0 auto;max-width:880px;aspect-ratio:9/7;
+  border:1px solid var(--line-strong);overflow:hidden;background:#111;
+  touch-action:none;user-select:none;
+}
+.layer{position:absolute;inset:0}
+.layer svg{width:100%;height:100%;display:block}
+#layer-foto{z-index:2}
+#layer-blueprint{z-index:1}
+#layer-foto{clip-path:inset(0 0 0 50%)}
+.skeleton{
+  position:absolute;inset:0;z-index:5;background:#101010;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--titanium);
+  transition:opacity .8s;
+}
+.skeleton::before{
+  content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(to bottom, var(--line) 0 1px, transparent 1px 60px);
+  animation:skel 1.2s ease-in-out infinite alternate;
+}
+@keyframes skel{from{opacity:.35}to{opacity:.9}}
+.skeleton.done{opacity:0;pointer-events:none}
+.wipe-handle{
+  position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--bone);z-index:6;cursor:ew-resize;
+}
+.wipe-handle::after{
+  content:"◂ ▸";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--void);
+  background:var(--bone);padding:7px 9px;white-space:nowrap;
+}
+.wipe-tag{position:absolute;bottom:12px;font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--titanium);z-index:6;pointer-events:none}
+.wipe-tag.l{left:14px}.wipe-tag.r{right:14px}
+#scan-beam{
+  position:absolute;top:0;bottom:0;width:70px;left:-90px;z-index:7;pointer-events:none;opacity:0;
+  background:linear-gradient(to right, transparent, rgba(242,239,233,.24) 45%, rgba(200,169,110,.5) 50%, rgba(242,239,233,.24) 55%, transparent);
+}
+#layer-wire{z-index:4;opacity:0;pointer-events:none}
+
+.obj-body{max-width:640px;margin:44px auto 0;font-size:17px;line-height:1.8;color:rgba(242,239,233,.72)}
+.obj-body strong{color:var(--bone);font-weight:500}
+
+/* ===== LAYOUT B ===== */
+.viewer-wrap.layout-b .viewer-stage{margin:0;max-width:560px;aspect-ratio:4/5}
+.viewer-wrap.layout-b{display:grid;grid-template-columns:minmax(300px,560px) 1fr;gap:clamp(28px,5vw,80px);align-items:center}
+.viewer-wrap.layout-b .obj-body{margin:0;max-width:460px}
+.big-number{
+  display:none;position:absolute;right:-2vw;top:-70px;z-index:0;
+  font-family:var(--serif);font-weight:300;font-size:clamp(160px,26vw,380px);
+  color:transparent;-webkit-text-stroke:1px var(--line-strong);line-height:1;pointer-events:none;
+}
+.viewer-wrap.layout-b .big-number{display:block}
+@media(max-width:860px){.viewer-wrap.layout-b{grid-template-columns:1fr}.viewer-wrap.layout-b .obj-body{margin-top:30px}}
+
+/* ===== SPECS ===== */
+.spec-grid{
+  margin-top:80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  border:1px solid var(--line);
+}
+.spec{padding:26px 22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.spec-key{font-family:var(--mono);font-size:8px;letter-spacing:.24em;color:var(--titanium);text-transform:uppercase;margin-bottom:12px}
+.spec-val{font-family:var(--serif);font-size:21px;font-weight:400;line-height:1.35}
+
+footer{
+  position:relative;z-index:1;margin-top:60px;padding:52px clamp(34px,7vw,110px) 70px;
+  border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:26px;justify-content:space-between;align-items:flex-end;
+}
+.foot-brand{font-family:var(--serif);font-size:30px;letter-spacing:.24em;color:var(--gold)}
+.foot-meta{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--titanium);line-height:2.1;text-transform:uppercase;text-align:right}
+@media(max-width:640px){.foot-meta{text-align:left}}
+
+body.blueprint{filter:grayscale(1) contrast(1.06)}
+body.blueprint #layer-foto{opacity:.25}
+body.blueprint #layer-wire{opacity:1 !important}
+
+.hud-btn:focus-visible,.wipe-handle:focus-visible{outline:1px solid var(--bone);outline-offset:3px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+@media(max-width:640px){
+  .ruler-left,.ruler-right{display:none}
+  #hud-coords,#hud-axis{display:none}
+  section{padding-left:22px;padding-right:22px}
+}
+</style>
+</head>
+<body>
+
+<div class="ruler ruler-top" id="ruler-top"></div>
+<div class="ruler ruler-bottom" id="ruler-bottom"></div>
+<div class="ruler ruler-left" id="ruler-left"></div>
+<div class="ruler ruler-right" id="ruler-right"></div>
+
+<div class="hud" id="hud-coords">X: 0000 · Y: 0000</div>
+<div class="hud" id="hud-axis">EIXOS X·Y·Z // ESCALA 1:1 // GRID 90PX</div>
+<div class="hud hud-controls">
+  <button class="hud-btn" id="btn-sound" aria-pressed="false">SOM: OFF</button>
+  <button class="hud-btn" id="btn-blueprint" aria-pressed="false">BLUEPRINT MODE</button>
+</div>
+
+<nav>
+  <a class="nav-brand" href="#hero">BASP.</a>
+  <div class="nav-meta">Representações · Catálogo Conceito · MMXXVI</div>
+</nav>
+
+<section id="hero">
+  <div class="kicker">[BASP REPRESENTAÇÕES // MOBILIÁRIO DE ALTO PADRÃO // MG·GO·DF]</div>
+  <h1>A Omissão<br>do <em>Excesso.</em></h1>
+  <p class="hero-text">
+    Não criamos móveis. <strong>Editamos o espaço.</strong> Cada peça que deixa nosso ateliê é o resultado
+    de um diálogo silencioso entre a brutalidade da matéria-prima e a obsessão pela linha exata.
+    Investigamos a tensão entre o peso da madeira nobre, a flexibilidade do couro legítimo e a
+    rigidez oculta do metal. Reduzir até que reste apenas a estrutura fundamental.
+    <strong>Onde a engenharia encontra o silêncio.</strong> Isso não é mobiliário.
+    É arquitetura em escala humana.
+  </p>
+  <div class="meta-strip">
+    <div class="meta-item scramble" data-text="[ESTRUTURA DETECTADA // RAIO DE CURVATURA EXTERNA: 12.4mm]">[ESTRUTURA DETECTADA // RAIO DE CURVATURA EXTERNA: 12.4mm]</div>
+    <div class="meta-item scramble" data-text="[TOLERÂNCIA ZERO: Junções angulares usinadas à mão com precisão microscópica]">[TOLERÂNCIA ZERO: Junções angulares usinadas à mão com precisão microscópica]</div>
+    <div class="meta-item scramble" data-text="[MATÉRIA-PRIMA SELECIONADA: Lâminas de nogueira maciça com certificação de origem // Lote N° 09-2026]">[MATÉRIA-PRIMA SELECIONADA: Lâminas de nogueira maciça com certificação de origem // Lote N° 09-2026]</div>
+  </div>
+</section>
+
+<section id="objeto">
+  <div class="obj-head">
+    <div>
+      <h2>Objeto N° 01: A Poltrona <em>Estrutural.</em></h2>
+      <div class="obj-sub">[ESPECIFICAÇÃO DE ENGENHARIA // CÓDIGO DE PROJETO: P-01_BRUT]</div>
+    </div>
+    <div class="obj-controls">
+      <button class="hud-btn" id="btn-layout" aria-pressed="false">LAYOUT: A — ESTÚDIO</button>
+      <button class="hud-btn" id="btn-scan">⟶ SCAN DE ENGENHARIA</button>
+    </div>
+  </div>
+
+  <div class="viewer-wrap" id="viewer-wrap">
+    <div class="big-number">01</div>
+
+    <div class="viewer-stage" id="stage">
+      <div class="skeleton" id="skeleton">[CARREGANDO TEXTURAS // AGUARDE]</div>
+
+      <div class="layer" id="layer-blueprint">
+        <svg viewBox="0 0 900 700" preserveAspectRatio="xMidYMid meet" aria-label="Desenho técnico da Poltrona Estrutural">
+          <rect width="900" height="700" fill="#0D0D0D"/>
+          <g stroke="rgba(242,239,233,0.06)" stroke-width="1">
+            <path d="M0 100H900M0 200H900M0 300H900M0 400H900M0 500H900M0 600H900"/>
+            <path d="M100 0V700M200 0V700M300 0V700M400 0V700M500 0V700M600 0V700M700 0V700M800 0V700"/>
+          </g>
+          <g stroke="#F2EFE9" stroke-width="1.4" fill="none" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M250 560 H610 M610 560 L610 470 M250 560 L250 500 L295 380"/>
+            <path d="M285 392 L580 372 Q604 370 606 392 L610 440 Q611 458 590 460 L305 478 Q283 480 281 458 Z"/>
+            <path d="M560 380 L610 180 Q615 158 636 164 Q656 170 652 192 L606 392"/>
+            <path d="M560 380 Q555 402 578 406 L600 410"/>
+            <path d="M295 380 L330 300 Q336 284 352 288 L520 322"/>
+            <path d="M300 430 L590 412" stroke-dasharray="3 6" stroke-width="1"/>
+            <path d="M585 350 L628 190" stroke-dasharray="3 6" stroke-width="1"/>
+          </g>
+          <g stroke="rgba(242,239,233,0.5)" stroke-width="1" fill="none">
+            <path d="M250 615 H610 M250 608 V622 M610 608 V622"/>
+            <path d="M700 180 V560 M693 180 H707 M693 560 H707"/>
+            <path d="M606 392 L680 340"/>
+          </g>
+          <g font-family="Space Mono, monospace" font-size="12" fill="rgba(242,239,233,0.75)">
+            <text x="405" y="640">820 mm</text>
+            <text x="716" y="375" transform="rotate(90 716 375)">780 mm</text>
+            <text x="686" y="330">R 12.4</text>
+            <text x="250" y="90" font-size="10" letter-spacing="3" fill="rgba(242,239,233,0.5)">P-01_BRUT // VISTA LATERAL // ESC 1:8</text>
+            <text x="250" y="672" font-size="9" letter-spacing="2" fill="rgba(242,239,233,0.4)">COSTURA MANUAL: 4 PTS/CM · CHASSI: AÇO CARBONO POLIDO · TOLERÂNCIA: ±0.05</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="layer" id="layer-foto">
+        <svg viewBox="0 0 900 700" preserveAspectRatio="xMidYMid meet" aria-label="Poltrona Estrutural — estúdio">
+          <defs>
+            <radialGradient id="studio" cx="50%" cy="38%" r="75%">
+              <stop offset="0%" stop-color="#242220"/><stop offset="60%" stop-color="#161514"/><stop offset="100%" stop-color="#0D0D0D"/>
+            </radialGradient>
+            <linearGradient id="couro" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#54402C"/><stop offset="45%" stop-color="#3A2C1E"/><stop offset="100%" stop-color="#241A11"/>
+            </linearGradient>
+            <linearGradient id="couro2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#5E4832"/><stop offset="100%" stop-color="#2B2014"/>
+            </linearGradient>
+            <linearGradient id="aco" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4E4E4C"/><stop offset="45%" stop-color="#B9B7B2"/><stop offset="55%" stop-color="#D9D7D2"/><stop offset="65%" stop-color="#8E8C88"/><stop offset="100%" stop-color="#3B3B39"/>
+            </linearGradient>
+          </defs>
+          <rect width="900" height="700" fill="url(#studio)"/>
+          <ellipse cx="440" cy="588" rx="240" ry="26" fill="rgba(0,0,0,0.55)"/>
+          <path d="M250 560 H610 L610 470 L596 470 L596 546 L264 546 L264 500 L306 384 L293 378 L250 500 Z" fill="url(#aco)"/>
+          <path d="M560 380 L610 180 Q615 158 636 164 Q656 170 652 192 L606 392 Q600 412 578 406 Q556 400 560 380 Z" fill="url(#couro2)"/>
+          <path d="M285 392 L580 372 Q604 370 606 392 L610 440 Q611 458 590 460 L305 478 Q283 480 281 458 Z" fill="url(#couro)"/>
+          <path d="M295 380 L330 300 Q336 284 352 288 L520 322 L516 338 L354 305 Q346 303 342 314 L311 386 Z" fill="url(#aco)"/>
+          <path d="M300 400 Q450 380 585 382 L583 396 Q450 394 303 412 Z" fill="rgba(242,239,233,0.08)"/>
+          <text x="250" y="90" font-family="Space Mono, monospace" font-size="10" letter-spacing="3" fill="rgba(242,239,233,0.35)">P-01_BRUT // COURO PLENO GRÃO · AÇO CARBONO</text>
+        </svg>
+      </div>
+
+      <div class="layer" id="layer-wire">
+        <svg viewBox="0 0 900 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <g stroke="#C8A96E" stroke-width="1" fill="none" opacity="0.9">
+            <path d="M250 560 H610 M610 560 L610 470 M250 560 L250 500 L295 380"/>
+            <path d="M285 392 L580 372 Q604 370 606 392 L610 440 Q611 458 590 460 L305 478 Q283 480 281 458 Z"/>
+            <path d="M560 380 L610 180 Q615 158 636 164 Q656 170 652 192 L606 392"/>
+            <path d="M295 380 L330 300 Q336 284 352 288 L520 322"/>
+            <path d="M281 458 L610 440 M285 392 L606 392" stroke-dasharray="2 5"/>
+          </g>
+        </svg>
+      </div>
+
+      <div id="scan-beam"></div>
+
+      <div class="wipe-handle" id="wipe-handle" tabindex="0" role="slider" aria-label="Comparar desenho técnico e produto final" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+      <div class="wipe-tag l">DESENHO TÉCNICO</div>
+      <div class="wipe-tag r">PRODUTO FINAL</div>
+    </div>
+
+    <p class="obj-body">
+      Uma silhueta nascida da geometria pura. A Poltrona Estrutural desafia a gravidade através de um
+      <strong>chassi flutuante de aço carbono polido</strong>, que sustenta o estofamento em
+      <strong>couro pleno grão</strong>. Cada costura é executada manualmente por artesãos de terceira
+      geração, seguindo uma métrica rigorosa de <strong>4 pontos por centímetro</strong>.
+      Arraste o cursor para desvendar as linhas de tensão que sustentam a forma.
+    </p>
+  </div>
+
+  <div class="spec-grid">
+    <div class="spec"><div class="spec-key">Matéria-prima</div><div class="spec-val">Nogueira maciça · certificação de origem</div></div>
+    <div class="spec"><div class="spec-key">Estrutura</div><div class="spec-val">Aço carbono polido · chassi flutuante</div></div>
+    <div class="spec"><div class="spec-key">Revestimento</div><div class="spec-val">Couro pleno grão · costura 4 pts/cm</div></div>
+    <div class="spec"><div class="spec-key">Tolerância</div><div class="spec-val">Junções usinadas à mão · ±0.05 mm</div></div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="foot-brand">BASP.</div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--titanium);margin-top:10px">REPRESENTAÇÕES COMERCIAIS · DESDE 2014</div>
+  </div>
+  <div class="foot-meta">
+    Minas Gerais · Goiás · Distrito Federal<br>
+    18°55'07"S 48°16'44"W · Uberlândia — MG<br>
+    basp.com.br · contato@basp.com.br
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function buildRuler(el, horizontal){
+  var size = horizontal ? window.innerWidth : window.innerHeight;
+  var html = '';
+  for(var p = 0; p <= size; p += 90){
+    var major = (p % 450 === 0);
+    if(horizontal){
+      html += '<span class="tick" style="left:'+p+'px;height:'+(major?10:5)+'px"></span>';
+      if(major) html += '<span class="tick-label" style="left:'+(p+4)+'px">'+String(p).padStart(4,'0')+'</span>';
+    } else {
+      html += '<span class="tick" style="top:'+p+'px;width:'+(major?10:5)+'px"></span>';
+      if(major) html += '<span class="tick-label" style="top:'+(p+4)+'px;left:4px">'+String(p).padStart(4,'0')+'</span>';
+    }
+  }
+  el.innerHTML = html;
+}
+function buildAllRulers(){
+  buildRuler(document.getElementById('ruler-top'), true);
+  buildRuler(document.getElementById('ruler-bottom'), true);
+  buildRuler(document.getElementById('ruler-left'), false);
+  buildRuler(document.getElementById('ruler-right'), false);
+}
+buildAllRulers();
+var rT; window.addEventListener('resize', function(){ clearTimeout(rT); rT = setTimeout(buildAllRulers, 200); });
+
+var coords = document.getElementById('hud-coords');
+document.addEventListener('mousemove', function(e){
+  coords.textContent = 'X: ' + String(e.clientX).padStart(4,'0') + ' · Y: ' + String(e.clientY).padStart(4,'0');
+});
+
+var audioOn = false, ctx = null;
+function mechClick(freq){
+  if(!audioOn) return;
+  if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  var t = ctx.currentTime;
+  var osc = ctx.createOscillator(), gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(freq || 1800, t);
+  osc.frequency.exponentialRampToValueAtTime(120, t + 0.035);
+  gain.gain.setValueAtTime(0.06, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t); osc.stop(t + 0.05);
+}
+var btnSound = document.getElementById('btn-sound');
+btnSound.addEventListener('click', function(){
+  audioOn = !audioOn;
+  btnSound.textContent = 'SOM: ' + (audioOn ? 'ON' : 'OFF');
+  btnSound.classList.toggle('on', audioOn);
+  btnSound.setAttribute('aria-pressed', audioOn);
+  mechClick(2200);
+});
+document.querySelectorAll('.hud-btn').forEach(function(b){
+  b.addEventListener('mouseenter', function(){ mechClick(1400); });
+});
+
+var CHARS = '0123456789░▒/\\|<>*#@ABCDEF';
+document.querySelectorAll('.scramble').forEach(function(el){
+  var original = el.dataset.text, timer = null;
+  el.addEventListener('mouseenter', function(){
+    if(reduced) return;
+    var frame = 0, len = original.length;
+    clearInterval(timer);
+    timer = setInterval(function(){
+      var out = '';
+      for(var i = 0; i < len; i++){
+        out += (i < frame) ? original[i] : (original[i] === ' ' ? ' ' : CHARS[Math.floor(Math.random() * CHARS.length)]);
+      }
+      el.textContent = out;
+      frame += Math.ceil(len / 22);
+      if(frame >= len){ el.textContent = original; clearInterval(timer); }
+    }, 28);
+    mechClick(900);
+  });
+});
+
+var skeleton = document.getElementById('skeleton');
+var stageObserver = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(en.isIntersecting){
+      setTimeout(function(){ skeleton.classList.add('done'); }, reduced ? 0 : 900);
+      stageObserver.disconnect();
+    }
+  });
+}, { threshold: 0.25 });
+stageObserver.observe(document.getElementById('stage'));
+
+var stage = document.getElementById('stage');
+var foto = document.getElementById('layer-foto');
+var handle = document.getElementById('wipe-handle');
+var dragging = false, lastTick = 0;
+function setWipe(pct){
+  pct = Math.max(2, Math.min(98, pct));
+  foto.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+  handle.style.left = pct + '%';
+  handle.setAttribute('aria-valuenow', Math.round(pct));
+  var now = Date.now();
+  if(now - lastTick > 90){ mechClick(700 + pct * 8); lastTick = now; }
+}
+function pctFromEvent(e){
+  var r = stage.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  return (x / r.width) * 100;
+}
+handle.addEventListener('pointerdown', function(e){ dragging = true; handle.setPointerCapture(e.pointerId); });
+window.addEventListener('pointermove', function(e){ if(dragging) setWipe(pctFromEvent(e)); });
+window.addEventListener('pointerup', function(){ dragging = false; });
+stage.addEventListener('pointerdown', function(e){ if(e.target !== handle) setWipe(pctFromEvent(e)); });
+handle.addEventListener('keydown', function(e){
+  var cur = parseFloat(handle.style.left) || 50;
+  if(e.key === 'ArrowLeft') setWipe(cur - 4);
+  if(e.key === 'ArrowRight') setWipe(cur + 4);
+});
+
+var scanning = false;
+document.getElementById('btn-scan').addEventListener('click', function(){
+  if(scanning) return; scanning = true;
+  mechClick(2400);
+  var beam = document.getElementById('scan-beam');
+  var wire = document.getElementById('layer-wire');
+  var w = stage.getBoundingClientRect().width;
+  gsap.set(beam, { x: 0, left: -90, opacity: 1 });
+  gsap.timeline({ onComplete: function(){ scanning = false; } })
+    .to(beam, { x: w + 180, duration: reduced ? 0.01 : 1.6, ease: 'power2.inOut' })
+    .to(wire, { opacity: 1, duration: 0.25 }, 0.25)
+    .to(wire, { opacity: 0, duration: 0.8, delay: 0.5 }, '>')
+    .to(beam, { opacity: 0, duration: 0.2 }, '<');
+});
+
+var btnBp = document.getElementById('btn-blueprint');
+btnBp.addEventListener('click', function(){
+  var on = document.body.classList.toggle('blueprint');
+  btnBp.classList.toggle('on', on);
+  btnBp.setAttribute('aria-pressed', on);
+  mechClick(on ? 600 : 1600);
+});
+
+var btnLayout = document.getElementById('btn-layout');
+var wrap = document.getElementById('viewer-wrap');
+btnLayout.addEventListener('click', function(){
+  mechClick(1100);
+  var toB = !wrap.classList.contains('layout-b');
+  gsap.to(wrap, { opacity: 0, y: 14, duration: reduced ? 0.01 : 0.3, ease: 'power2.in', onComplete: function(){
+    wrap.classList.toggle('layout-b', toB);
+    btnLayout.textContent = toB ? 'LAYOUT: B — EDITORIAL' : 'LAYOUT: A — ESTÚDIO';
+    gsap.to(wrap, { opacity: 1, y: 0, duration: reduced ? 0.01 : 0.5, ease: 'power2.out' });
+  }});
+});
+
+if(!reduced){
+  gsap.from('#hero .kicker', { opacity: 0, y: 16, duration: 0.9, delay: 0.15 });
+  gsap.from('#hero h1', { opacity: 0, y: 34, duration: 1.1, delay: 0.3, ease: 'power3.out' });
+  gsap.from('.hero-text', { opacity: 0, y: 22, duration: 1, delay: 0.55 });
+  gsap.from('.meta-item', { opacity: 0, y: 14, duration: 0.7, delay: 0.8, stagger: 0.12 });
+  var revealObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        gsap.fromTo(en.target, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' });
+        revealObs.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  ['#objeto .obj-head', '.viewer-stage', '.obj-body', '.spec-grid', 'footer'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(el){ revealObs.observe(el); });
+  });
+}
+})();
+</script>
+</body>
+</html>

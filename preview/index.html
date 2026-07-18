@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>BASP — Rascunho de Layout (réplica estrutural B&B Italia)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jura:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0b09;
+    --bg-2:#151210;
+    --ivory:#f5f0e8;
+    --gold:#d2af78;
+    --gold-light:#e8d5a3;
+    --gold-dark:#a8853a;
+    --glass:rgba(245,240,232,0.04);
+    --border:rgba(210,175,120,0.18);
+    --border-strong:rgba(210,175,120,0.35);
+    --radius:10px;
+    --blur:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ivory);
+    font-family:'Crimson Pro', serif;
+    font-weight:300;
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  body.modal-open{overflow:hidden;}
+  h1,h2,h3,.display{font-family:'Italiana', serif; font-weight:400; letter-spacing:.02em;}
+  nav, .ui, .btn, .tag, .label-mono{font-family:'Jura', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+  button{font-family:inherit; cursor:pointer;}
+  .container{max-width:1360px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- DRAFT BANNER ---------- */
+  .draft-banner{
+    background:linear-gradient(90deg, var(--gold-dark), var(--gold));
+    color:#0d0b09;
+    text-align:center;
+    font-family:'Jura', sans-serif;
+    font-size:12.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    padding:9px 16px;
+    font-weight:600;
+  }
+
+  /* ---------- PLACEHOLDER IMAGE BLOCKS ---------- */
+  .ph{
+    position:relative;
+    background:
+      repeating-linear-gradient(135deg, rgba(210,175,120,.10) 0 2px, transparent 2px 14px),
+      linear-gradient(160deg, #1c1815, #0d0b09 70%);
+    border:1px dashed var(--border-strong);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--gold-light);
+    font-family:'Jura', sans-serif;
+    font-size:12px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    overflow:hidden;
+  }
+  .ph span{padding:10px 14px; opacity:.85;}
+  .ph.filled{border:none; background:none;}
+  .ph.filled img{width:100%; height:100%; object-fit:cover; display:block;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(13,11,9,0.85);
+    backdrop-filter:blur(var(--blur));
+    border-bottom:1px solid var(--border);
+  }
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    max-width:1360px; margin:0 auto;
+    gap:20px;
+  }
+  .logo{
+    font-family:'Italiana', serif;
+    font-size:26px;
+    letter-spacing:.28em;
+    color:var(--ivory);
+    white-space:nowrap;
+    display:inline-flex;
+    align-items:center;
+  }
+  .logo img{height:38px; width:auto; display:block;}
+  .main-nav{display:flex; gap:34px; align-items:center;}
+  .main-nav > .nav-item{position:relative; padding:8px 0;}
+  .main-nav > .nav-item > a{
+    font-size:13px; letter-spacing:.09em; text-transform:uppercase; color:var(--ivory);
+    transition:color .25s;
+  }
+  .main-nav > .nav-item:hover > a{color:var(--gold-light);}
+  .nav-actions{display:flex; gap:16px; align-items:center;}
+  .icon-btn{
+    width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    font-size:15px; color:var(--gold-light); transition:.25s; background:none;
+  }
+  .icon-btn:hover{border-color:var(--border-strong); background:var(--glass); transform:scale(1.06);}
+  .burger{display:none; font-size:22px; color:var(--ivory); background:none; border:none;}
+
+  /* Mega menu */
+  .mega{
+    position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%);
+    width:min(920px, 90vw);
+    background:rgba(21,18,16,0.98);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:28px;
+    display:none;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+    box-shadow:0 30px 60px rgba(0,0,0,.55);
+  }
+  .mega.mega-5{grid-template-columns:repeat(5, 1fr); width:min(1100px, 92vw);}
+  .nav-item:hover .mega{display:grid;}
+  .mega-col h4{
+    font-family:'Jura', sans-serif; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border);
+  }
+  .mega-col .ph{height:120px; border-radius:6px; margin-bottom:12px; font-size:10.5px;}
+  .mega-col ul{list-style:none;}
+  .mega-col li a{
+    display:block; font-family:'Crimson Pro', serif; font-size:15px; color:var(--ivory);
+    padding:4px 0; transition:.2s;
+  }
+  .mega-col li a:hover{color:var(--gold-light); padding-left:4px;}
+  .mega-col.about-col{display:flex; flex-direction:column;}
+  .mega-col.about-col .ph{height:150px;}
+  .mega-col.about-col a.about-link{font-family:'Italiana', serif; font-size:16px; color:var(--ivory);}
+  .mega-col.about-col a.about-link:hover{color:var(--gold-light);}
+
+  /* ---------- MODALS (welcome / login / faq / contact) ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(8,7,6,.82); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--bg-2); border:1px solid var(--border-strong); border-radius:var(--radius);
+    width:100%; max-width:560px; max-height:86vh; overflow-y:auto;
+    padding:40px; position:relative;
+  }
+  .modal-box.wide{max-width:720px;}
+  .modal-close{
+    position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--border); background:none; color:var(--ivory); font-size:16px;
+  }
+  .modal-close:hover{border-color:var(--gold); color:var(--gold-light);}
+  .modal-eyebrow{font-family:'Jura',sans-serif; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;}
+  .modal-box h3{font-size:26px; margin-bottom:18px;}
+  .modal-box p.desc{color:rgba(245,240,232,.7); margin-bottom:24px; font-size:15px;}
+  .region-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;}
+  .region-grid button{
+    padding:16px 10px; border:1px solid var(--border-strong); background:transparent; color:var(--ivory);
+    font-family:'Jura',sans-serif; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; border-radius:4px; transition:.2s;
+  }
+  .region-grid button:hover{border-color:var(--gold); background:var(--glass); color:var(--gold-light);}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; font-family:'Jura',sans-serif; color:rgba(245,240,232,.6); margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%; background:transparent; border:1px solid var(--border-strong); color:var(--ivory);
+    padding:11px 14px; font-family:'Crimson Pro', serif; font-size:15px; border-radius:3px;
+  }
+  .field textarea{min-height:90px; resize:vertical;}
+  .field select{appearance:none;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .checkline{display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:rgba(245,240,232,.6); margin-bottom:14px;}
+  .checkline input{margin-top:3px;}
+
+  .faq-item{border-bottom:1px solid var(--border); padding:16px 0;}
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center; width:100%; background:none; border:none;
+    color:var(--ivory); font-family:'Italiana', serif; font-size:16.5px; text-align:left;
+  }
+  .faq-q .plus{color:var(--gold); font-size:20px; transition:.25s;}
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .faq-item.open .faq-a{max-height:260px;}
+  .faq-a p{padding-top:10px; font-size:14.5px; color:rgba(245,240,232,.72);}
+
+  .login-tabs{display:flex; gap:24px; margin-bottom:24px; border-bottom:1px solid var(--border);}
+  .login-tabs span{font-size:12px; letter-spacing:.1em; text-transform:uppercase; padding-bottom:10px; color:rgba(245,240,232,.5);}
+  .login-tabs span.active{color:var(--gold-light); border-bottom:2px solid var(--gold);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative; height:88vh; min-height:560px;
+    display:flex; align-items:flex-end;
+  }
+  .hero .ph{position:absolute; inset:0; z-index:0;}
+  .hero .ph img{transition:opacity .5s ease;}
+  .hero::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(13,11,9,.92) 0%, rgba(13,11,9,.25) 45%, rgba(13,11,9,.05) 100%);
+    z-index:1;
+  }
+  .hero-content{position:relative; z-index:2; padding:0 32px 64px; max-width:1360px; margin:0 auto; width:100%;}
+  .hero-eyebrow{font-family:'Jura', sans-serif; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-light); margin-bottom:14px;}
+  .hero h1{font-size:clamp(38px, 5.6vw, 76px); line-height:1.02; max-width:800px; color:var(--ivory);}
+  .hero p{font-size:18px; color:rgba(245,240,232,.8); max-width:520px; margin-top:18px; font-style:italic;}
+  .hero-cta{margin-top:28px; display:flex; gap:16px; flex-wrap:wrap;}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 28px; border-radius:2px;
+    font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600;
+    border:1px solid var(--gold);
+    transition:.25s; background:none; color:var(--ivory);
+  }
+  .btn-solid{background:var(--gold); color:#0d0b09;}
+  .btn-solid:hover{background:var(--gold-light); transform:translateY(-2px);}
+  .btn-outline{color:var(--ivory); border-color:var(--border-strong);}
+  .btn-outline:hover{background:var(--glass); border-color:var(--gold); transform:translateY(-2px);}
+  .btn-block{width:100%; justify-content:center;}
+
+  .hero-dots{position:absolute; bottom:24px; right:32px; z-index:3; display:flex; gap:8px;}
+  .hero-dots button{
+    width:22px; height:2px; background:rgba(245,240,232,.35); border:none; padding:0;
+  }
+  .hero-dots button.active{background:var(--gold);}
+
+  /* ---------- HIGHLIGHTS STRIP ---------- */
+  .highlights{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+    background:var(--border); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  }
+  .highlight-card{
+    background:var(--bg); padding:26px 24px; transition:.25s;
+  }
+  .highlight-card:hover{background:var(--bg-2);}
+  .highlight-card .label-mono{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; display:block;}
+  .highlight-card h3{font-size:19px; margin-bottom:10px;}
+  .highlight-card .link{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ivory); border-bottom:1px solid var(--border-strong); padding-bottom:2px;}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:100px 0;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:48px; gap:24px; flex-wrap:wrap;}
+  .section-head .eyebrow{font-family:'Jura', sans-serif; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px;}
+  .section-head h2{font-size:clamp(28px, 3.4vw, 44px);}
+  .section-head .see-all{font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; border-bottom:1px solid var(--border-strong); padding-bottom:4px;}
+
+  /* ---------- PRODUCT INSPIRATIONS ACCORDION ---------- */
+  .accordion-row{display:flex; gap:6px; height:420px;}
+  .accordion-panel{
+    position:relative; flex:1; overflow:hidden; cursor:pointer;
+    transition:flex .55s cubic-bezier(.4,0,.2,1);
+    border:1px solid var(--border);
+  }
+  .accordion-panel.active{flex:3.4;}
+  .accordion-panel .ph{position:absolute; inset:0; border:none; border-radius:0;}
+  .accordion-panel::after{
+    content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(0deg, rgba(13,11,9,.85), rgba(13,11,9,.05) 60%);
+  }
+  .accordion-cap{position:absolute; left:0; right:0; bottom:0; z-index:2; padding:20px; white-space:nowrap; overflow:hidden;}
+  .accordion-cap .label-mono{font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-light); display:block; margin-bottom:4px;}
+  .accordion-cap .name{font-family:'Italiana', serif; font-size:16px; opacity:0; transform:translateY(6px); transition:.35s .1s;}
+  .accordion-panel.active .accordion-cap .name{opacity:1; transform:translateY(0);}
+
+  /* ---------- PRODUCT MOSAIC ---------- */
+  .mosaic{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+  .mosaic-item{position:relative;}
+  .mosaic-item .ph{aspect-ratio:3/4.2; border-radius:4px; transition:.4s;}
+  .mosaic-item:hover .ph{border-color:var(--gold); transform:translateY(-4px);}
+  .mosaic-item .tag{
+    position:absolute; top:12px; left:12px; z-index:2;
+    background:var(--gold); color:#0d0b09; font-size:10px; letter-spacing:.1em; font-weight:700;
+    padding:4px 10px; border-radius:2px; text-transform:uppercase;
+  }
+  .mosaic-cap{padding-top:14px;}
+  .mosaic-cap .prod{font-family:'Italiana', serif; font-size:17px; color:var(--ivory);}
+  .mosaic-cap .meta{font-size:12.5px; color:rgba(245,240,232,.6); margin-top:4px; font-style:italic;}
+
+  /* ---------- SEGMENT DISCOVER BLOCKS ---------- */
+  .segments{display:grid; grid-template-columns:repeat(3, 1fr); gap:2px; background:var(--border);}
+  .segment-block{position:relative; height:520px; overflow:hidden; background:var(--bg);}
+  .segment-block .ph{position:absolute; inset:0; transition:transform .6s ease; border:none; border-radius:0;}
+  .segment-block:hover .ph{transform:scale(1.05);}
+  .segment-block::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(0deg, rgba(13,11,9,.88), rgba(13,11,9,.15) 55%);
+    z-index:1; pointer-events:none;
+  }
+  .segment-caption{
+    position:absolute; left:0; right:0; bottom:0; z-index:2; padding:32px;
+  }
+  .segment-caption .label-mono{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-light); display:block; margin-bottom:8px;}
+  .segment-caption h3{font-size:30px; margin-bottom:14px;}
+  .segment-caption .btn{padding:10px 20px; font-size:11px;}
+
+  /* ---------- STORE LOCATOR ---------- */
+  .locator{
+    display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:0;
+  }
+  .locator-text{padding:80px 60px;}
+  .locator-text h2{font-size:clamp(26px,3vw,40px); margin-bottom:18px;}
+  .locator-text p{color:rgba(245,240,232,.75); max-width:440px; margin-bottom:26px;}
+  .locator-links{display:flex; gap:20px; flex-wrap:wrap; align-items:center;}
+  .locator-links .textlink{font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; border-bottom:1px solid var(--border-strong); padding-bottom:3px;}
+  .locator .ph{height:460px; border-radius:0;}
+
+  /* ---------- SPECIFIER / A&D AREA ---------- */
+  .specifier{
+    background:var(--bg-2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    text-align:center; padding:100px 32px;
+  }
+  .specifier .eyebrow{font-family:'Jura', sans-serif; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:14px;}
+  .specifier h2{font-size:clamp(28px,4vw,46px); max-width:760px; margin:0 auto 22px;}
+  .specifier p{color:rgba(245,240,232,.7); max-width:560px; margin:0 auto 32px;}
+  .specifier .btn-group{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+  /* ---------- NEWSLETTER ---------- */
+  .newsletter{padding:90px 0; text-align:center;}
+  .newsletter h2{font-size:clamp(24px,3vw,36px); margin-bottom:12px;}
+  .newsletter p{color:rgba(245,240,232,.65); margin-bottom:30px;}
+  .newsletter-form{display:flex; justify-content:center; gap:0; max-width:480px; margin:0 auto;}
+  .newsletter-form input{
+    flex:1; background:transparent; border:1px solid var(--border-strong); border-right:none;
+    color:var(--ivory); padding:14px 18px; font-family:'Crimson Pro', serif; font-size:15px;
+  }
+  .newsletter-form input::placeholder{color:rgba(245,240,232,.4);}
+  .newsletter-form button{border-radius:0;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:#080706; border-top:1px solid var(--border); padding-top:70px;}
+  .footer-grid{
+    display:grid; grid-template-columns:1.4fr repeat(4, 1fr); gap:32px; padding-bottom:40px;
+  }
+  .footer-col h4{font-family:'Jura', sans-serif; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-bottom:18px;}
+  .footer-col ul{list-style:none;}
+  .footer-col li{margin-bottom:10px;}
+  .footer-col li a, .footer-col li button{font-size:14px; color:rgba(245,240,232,.75); transition:.2s; background:none; border:none; text-align:left; padding:0;}
+  .footer-col li a:hover, .footer-col li button:hover{color:var(--gold-light);}
+  .footer-brand .logo{margin-bottom:14px; display:block;}
+  .footer-brand p{font-size:13.5px; color:rgba(245,240,232,.55); max-width:280px;}
+  .footer-social{display:flex; gap:12px; margin-top:20px;}
+
+  .footer-region{
+    border-top:1px solid var(--border); padding:20px 0; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  }
+  .footer-region .label-mono{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold);}
+  .footer-region .regions{display:flex; gap:16px; flex-wrap:wrap;}
+  .footer-region .regions button{
+    background:none; border:1px solid var(--border); color:rgba(245,240,232,.7); font-size:12px;
+    padding:6px 14px; border-radius:14px; font-family:'Jura',sans-serif;
+  }
+  .footer-region .regions button:hover, .footer-region .regions button.active{border-color:var(--gold); color:var(--gold-light);}
+
+  .footer-bottom{
+    border-top:1px solid var(--border); padding:22px 0; display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:12px; font-size:12px; color:rgba(245,240,232,.5);
+  }
+  .footer-bottom .legal-links{display:flex; gap:18px; flex-wrap:wrap;}
+  .footer-bottom .legal-links a{white-space:nowrap;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:960px){
+    .main-nav{display:none;}
+    .burger{display:block;}
+    .highlights{grid-template-columns:repeat(2,1fr);}
+    .mosaic{grid-template-columns:repeat(2,1fr);}
+    .segments{grid-template-columns:1fr;}
+    .locator{grid-template-columns:1fr;}
+    .locator-text{padding:56px 28px;}
+    .footer-grid{grid-template-columns:repeat(2,1fr);}
+    .accordion-row{height:340px; flex-wrap:wrap;}
+    .field-row{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .container{padding:0 20px;}
+    .hero{height:78vh;}
+    .highlights{grid-template-columns:1fr;}
+    .mosaic{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .newsletter-form{flex-direction:column;}
+    .newsletter-form input{border-right:1px solid var(--border-strong); margin-bottom:10px;}
+    .accordion-row{height:auto;}
+    .accordion-panel{flex:1 1 45%; height:180px;}
+    .accordion-panel.active{flex:1 1 100%;}
+    .region-grid{grid-template-columns:1fr;}
+    .modal-box{padding:28px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">
+  RASCUNHO DE LAYOUT — estrutura inspirada no bebitalia.com · segmentos, textos e fotos são placeholders de exemplo, aguardando definição e material real
+</div>
+
+<!-- ===================== HEADER ===================== -->
+<header>
+  <div class="topbar">
+    <button class="burger" id="burgerBtn">☰</button>
+    <a href="#" class="logo"><img src="basp-logo.png" alt="BASP"></a>
+    <nav class="main-nav">
+      <div class="nav-item">
+        <a href="#sobre">Sobre</a>
+        <div class="mega mega-5">
+          <div class="mega-col about-col">
+            <div class="ph"><span>Foto<br>História</span></div>
+            <a href="#" class="about-link">História</a>
+          </div>
+          <div class="mega-col about-col">
+            <div class="ph"><span>Foto<br>Identidade</span></div>
+            <a href="#" class="about-link">Identidade</a>
+          </div>
+          <div class="mega-col about-col">
+            <div class="ph"><span>Foto<br>Fábricas</span></div>
+            <a href="#produtos" class="about-link">Nossas Fábricas</a>
+          </div>
+          <div class="mega-col about-col">
+            <div class="ph"><span>Foto<br>Sustentabilidade</span></div>
+            <a href="#" class="about-link">Sustentabilidade</a>
+          </div>
+          <div class="mega-col about-col">
+            <div class="ph"><span>Foto<br>Rede</span></div>
+            <a href="#lojas" class="about-link">Rede &amp; Distribuição</a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="#produtos">Produtos</a>
+        <div class="mega">
+          <div class="mega-col">
+            <h4>Área Externa <span style="opacity:.5">(exemplo)</span></h4>
+            <div class="ph"><span>Foto ambientada<br>Área Externa</span></div>
+            <ul>
+              <li><a href="#">Sofás</a></li>
+              <li><a href="#">Poltronas</a></li>
+              <li><a href="#">Mesas</a></li>
+              <li><a href="#">Espreguiçadeiras</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>Estofados <span style="opacity:.5">(exemplo)</span></h4>
+            <div class="ph"><span>Foto ambientada<br>Estofados</span></div>
+            <ul>
+              <li><a href="#">Sofás</a></li>
+              <li><a href="#">Poltronas</a></li>
+              <li><a href="#">Cabeceiras</a></li>
+              <li><a href="#">Puffs</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>Pedras <span style="opacity:.5">(exemplo)</span></h4>
+            <div class="ph"><span>Foto ambientada<br>Pedras</span></div>
+            <ul>
+              <li><a href="#">Bancadas</a></li>
+              <li><a href="#">Mesas</a></li>
+              <li><a href="#">Revestimentos</a></li>
+              <li><a href="#">Painéis</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item"><a href="#inspire">Inspire-se</a></div>
+      <div class="nav-item"><a href="#especificador">Projetos</a></div>
+      <div class="nav-item"><a href="#" data-modal="loginModal">Área do Profissional</a></div>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" title="Buscar" id="searchToggle">⌕</button>
+      <button class="icon-btn" title="Entrar / Área do Profissional" data-modal="loginModal">☺</button>
+      <a href="#lojas" class="icon-btn" title="Encontrar loja">⚲</a>
+    </div>
+  </div>
+  <div id="searchBar" style="display:none; border-top:1px solid var(--border); background:var(--bg-2);">
+    <div class="container" style="padding:16px 32px;">
+      <input type="text" placeholder="Buscar produtos, fábricas, categorias..." style="width:100%; background:transparent; border:none; color:var(--ivory); font-family:'Crimson Pro',serif; font-size:18px; outline:none;">
+    </div>
+  </div>
+</header>
+
+<!-- ===================== WELCOME / REGION MODAL ===================== -->
+<div class="modal-overlay" id="welcomeModal">
+  <div class="modal-box">
+    <button class="modal-close" data-close>✕</button>
+    <div class="modal-eyebrow">Bem-vindo</div>
+    <h3>Selecione sua unidade mais próxima</h3>
+    <p class="desc">Para uma experiência otimizada, confirme a região onde deseja ver lojas, revendedores e disponibilidade de produtos.</p>
+    <div class="region-grid">
+      <button data-region="MG">Minas Gerais</button>
+      <button data-region="GO">Goiás</button>
+      <button data-region="DF">Distrito Federal</button>
+    </div>
+    <button class="btn btn-outline btn-block" data-close>Continuar sem selecionar</button>
+  </div>
+</div>
+
+<!-- ===================== LOGIN / A&D MODAL ===================== -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" data-close>✕</button>
+    <div class="modal-eyebrow">Área do Profissional</div>
+    <h3>Bem-vindo de volta</h3>
+    <div class="login-tabs">
+      <span class="active">Entrar</span>
+      <span>Cadastrar-se</span>
+    </div>
+    <div class="field"><label>E-mail</label><input type="email" placeholder="seu@email.com"></div>
+    <div class="field"><label>Senha</label><input type="password" placeholder="••••••••"></div>
+    <button class="btn btn-solid btn-block" type="button">Entrar</button>
+    <p class="desc" style="margin-top:18px; margin-bottom:0; font-size:13px;">É arquiteto, designer ou especificador e ainda não tem cadastro? <a href="#" style="color:var(--gold-light); border-bottom:1px solid var(--border-strong);">Cadastre-se aqui</a>.</p>
+  </div>
+</div>
+
+<!-- ===================== FAQ MODAL ===================== -->
+<div class="modal-overlay" id="faqModal">
+  <div class="modal-box wide">
+    <button class="modal-close" data-close>✕</button>
+    <div class="modal-eyebrow">Ajuda</div>
+    <h3>Perguntas frequentes</h3>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q"><span>Onde encontro a lista de lojas e revendedores?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>A lista completa de lojas e revendedores autorizados está disponível na seção "Encontre uma loja" do site.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Posso comprar direto da fábrica?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>Nossos produtos são distribuídos por lojas e revendedores autorizados, listados na seção de lojas do site.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Como recebo o catálogo impresso?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>Para solicitar um catálogo, escreva para nosso contato com seus dados e endereço para envio.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Onde baixo os catálogos em PDF?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>Os catálogos digitais de cada fábrica ficam disponíveis na seção "Catálogos" do rodapé.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Como peço um orçamento para um projeto completo?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>Envie nome e local do projeto, lista de produtos desejados, quantidades e prazo de entrega pelo formulário de contato.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Como envio uma proposta de parceria ou representação?</span><span class="plus">+</span></button>
+        <div class="faq-a"><p>Envie seu perfil de empresa, site e marcas com as quais trabalha através do formulário de contato.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CONTACT MODAL ===================== -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal-box wide">
+    <button class="modal-close" data-close>✕</button>
+    <div class="modal-eyebrow">Fale conosco</div>
+    <h3>Como podemos ajudar?</h3>
+    <form onsubmit="return false;">
+      <div class="field">
+        <label>Assunto</label>
+        <select>
+          <option>Informações de produto (preços, dimensões)</option>
+          <option>Materiais do produto (imagens, técnico)</option>
+          <option>Catálogos</option>
+          <option>Projetos / Contract</option>
+          <option>Informações da empresa</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="field"><label>Mensagem</label><textarea placeholder="Escreva sua mensagem..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Nome</label><input type="text"></div>
+        <div class="field"><label>Sobrenome</label><input type="text"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>E-mail</label><input type="email"></div>
+        <div class="field"><label>Unidade</label>
+          <select><option>Minas Gerais</option><option>Goiás</option><option>Distrito Federal</option><option>Outro</option></select>
+        </div>
+      </div>
+      <div class="checkline"><input type="checkbox"><span>Li e concordo com a Política de Privacidade e autorizo o uso dos meus dados para retorno deste contato.</span></div>
+      <button class="btn btn-solid btn-block" type="submit">Enviar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="heroSection">
+  <div class="ph filled" id="heroPh"><img id="heroImg" src="hero-fiorenza-poente.jpg" alt="Poltrona Fiorenza sobre as pedras ao pôr do sol"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">Coleção 2026</div>
+    <h1 id="heroTitle">Design que nasce<br>na fábrica, vive<br>no seu espaço.</h1>
+    <p id="heroSub">Do concreto ao acabamento final — peças assinadas pelas fábricas do grupo BASP.</p>
+    <div class="hero-cta">
+      <a href="#produtos" class="btn btn-solid">Ver coleção</a>
+      <a href="#lojas" class="btn btn-outline">Encontrar loja</a>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots">
+    <button class="active" data-i="0"></button>
+    <button data-i="1"></button>
+    <button data-i="2"></button>
+    <button data-i="3"></button>
+  </div>
+</section>
+
+<!-- ===================== HIGHLIGHTS ===================== -->
+<section class="highlights">
+  <div class="highlight-card">
+    <span class="label-mono">Evento</span>
+    <h3>Feira Setorial 2026</h3>
+    <a href="#" class="link">Saiba mais</a>
+  </div>
+  <div class="highlight-card">
+    <span class="label-mono">Catálogo</span>
+    <h3>Coleção completa 2026</h3>
+    <a href="#" class="link">Baixar PDF</a>
+  </div>
+  <div class="highlight-card">
+    <span class="label-mono">Novidade</span>
+    <h3>Linha Pedras — lançamento</h3>
+    <a href="#" class="link">Descobrir</a>
+  </div>
+  <div class="highlight-card">
+    <span class="label-mono">Institucional</span>
+    <h3>Conheça as fábricas</h3>
+    <a href="#sobre" class="link">Ver rede</a>
+  </div>
+</section>
+
+<!-- ===================== PRODUCT INSPIRATIONS ACCORDION ===================== -->
+<section class="section" style="padding-bottom:60px;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Inspire-se</div>
+        <h2>Ambientes com a nossa cara</h2>
+      </div>
+    </div>
+    <div class="accordion-row" id="accordionRow">
+      <div class="accordion-panel active">
+        <div class="ph filled"><img src="inspire-sofa-nana.jpg" alt="Sofá Nanã"></div>
+        <div class="accordion-cap"><span class="label-mono">Linha Estofados</span><span class="name">Sofá Nanã</span></div>
+      </div>
+      <div class="accordion-panel">
+        <div class="ph filled"><img src="inspire-sofa-odessa.jpg" alt="Sofá Odessa"></div>
+        <div class="accordion-cap"><span class="label-mono">Linha Estofados</span><span class="name">Sofá Odessa</span></div>
+      </div>
+      <div class="accordion-panel">
+        <div class="ph filled"><img src="inspire-sofa-tondo-org.jpg" alt="Sofá Tondo Org"></div>
+        <div class="accordion-cap"><span class="label-mono">Linha Estofados</span><span class="name">Sofá Tondo Org</span></div>
+      </div>
+      <div class="accordion-panel">
+        <div class="ph filled"><img src="inspire-sofa-pet-friendly.jpg" alt="Sofá modular em ambiente aconchegante"></div>
+        <div class="accordion-cap"><span class="label-mono">Linha Estofados</span><span class="name">Sala de estar aconchegante</span></div>
+      </div>
+      <div class="accordion-panel">
+        <div class="ph filled"><img src="inspire-sofa-couro-industrial.jpg" alt="Sofá de couro caramelo em ambiente industrial"></div>
+        <div class="accordion-cap"><span class="label-mono">Linha Estofados</span><span class="name">Sofá de couro — clima industrial</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRODUCT MOSAIC ===================== -->
+<section class="section" style="padding-top:20px;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Coleção</div>
+        <h2>Peças em destaque</h2>
+      </div>
+      <a href="#produtos" class="see-all">Ver todos os produtos</a>
+    </div>
+    <div class="mosaic">
+      <div class="mosaic-item">
+        <span class="tag">Novo</span>
+        <div class="ph filled"><img src="pedras-mesa-chandelier.jpg" alt="Mesa de jantar em pedra natural, base preta"></div>
+        <div class="mosaic-cap">
+          <div class="prod">Mesa de jantar — pedra natural</div>
+          <div class="meta">Linha Pedras — nome a confirmar</div>
+        </div>
+      </div>
+      <div class="mosaic-item">
+        <div class="ph filled"><img src="pedras-mesa-redonda.jpg" alt="Mesa redonda em mármore preto com veios dourados"></div>
+        <div class="mosaic-cap">
+          <div class="prod">Mesa redonda — mármore</div>
+          <div class="meta">Linha Pedras — nome a confirmar</div>
+        </div>
+      </div>
+      <div class="mosaic-item">
+        <span class="tag">Novo</span>
+        <div class="ph filled"><img src="pedras-mesa-lateral.jpg" alt="Mesa de centro redonda em mármore claro"></div>
+        <div class="mosaic-cap">
+          <div class="prod">Mesa de centro — mármore claro</div>
+          <div class="meta">Linha Pedras — nome a confirmar</div>
+        </div>
+      </div>
+      <div class="mosaic-item">
+        <div class="ph filled"><img src="produto-poltrona-albatroz.jpg" alt="Poltrona Albatroz estofada"></div>
+        <div class="mosaic-cap">
+          <div class="prod">Poltrona Albatroz</div>
+          <div class="meta">Linha Estofados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SEGMENT BLOCKS ===================== -->
+<section class="segments" id="produtos">
+  <div class="segment-block">
+    <div class="ph filled"><img src="area-externa-segmento-ovo.jpg" alt="Poltronas ninho trançadas em ambiente externo arborizado"></div>
+    <div class="segment-caption">
+      <span class="label-mono">Segmento</span>
+      <h3>Área Externa</h3>
+      <a href="#" class="btn btn-outline">Descobrir</a>
+    </div>
+  </div>
+  <div class="segment-block">
+    <div class="ph filled"><img src="estofados-segmento-sofa.jpg" alt="Sofá de couro caramelo em ambiente com parede de pedra"></div>
+    <div class="segment-caption">
+      <span class="label-mono">Segmento</span>
+      <h3>Estofados</h3>
+      <a href="#" class="btn btn-outline">Descobrir</a>
+    </div>
+  </div>
+  <div class="segment-block">
+    <div class="ph filled"><img src="pedras-segmento-sala.jpg" alt="Sala de jantar com mesa em mármore e cadeiras estofadas mostarda"></div>
+    <div class="segment-caption">
+      <span class="label-mono">Segmento</span>
+      <h3>Pedras</h3>
+      <a href="#" class="btn btn-outline">Descobrir</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STORE LOCATOR ===================== -->
+<section class="locator" id="lojas">
+  <div class="locator-text">
+    <div class="eyebrow" style="font-family:'Jura',sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Rede de lojas</div>
+    <h2>Encontre um ponto de venda BASP perto de você</h2>
+    <p>Nossas fábricas estão presentes em MG · GO · DF, com representantes e lojas parceiras em todo o território.</p>
+    <div class="locator-links">
+      <a href="#" class="btn btn-solid">Buscar loja mais próxima</a>
+      <a href="#" class="textlink">Usar minha localização atual</a>
+    </div>
+  </div>
+  <div class="ph"><span>[ Mapa / foto de showroom ]</span></div>
+</section>
+
+<!-- ===================== SPECIFIER / A&D ===================== -->
+<section class="specifier" id="especificador">
+  <div class="eyebrow">Para arquitetos e especificadores</div>
+  <h2>Um time dedicado para transformar seu projeto</h2>
+  <p>Consultoria one-on-one, catálogos técnicos e acesso a condições exclusivas para profissionais de arquitetura e design.</p>
+  <div class="btn-group">
+    <button class="btn btn-solid" data-modal="loginModal">Cadastrar como profissional</button>
+    <button class="btn btn-outline" data-modal="contactModal">Falar com um consultor</button>
+  </div>
+</section>
+
+<!-- ===================== NEWSLETTER ===================== -->
+<section class="newsletter">
+  <div class="container">
+    <h2>Fique por dentro das novidades BASP</h2>
+    <p>Lançamentos, feiras e conteúdo exclusivo direto no seu e-mail.</p>
+    <form class="newsletter-form" onsubmit="return false;">
+      <input type="email" placeholder="Seu e-mail">
+      <button type="submit" class="btn btn-solid">Assinar</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <a href="#" class="logo">BASP</a>
+        <p>Grupo com 15 fábricas + OTTO Mobília Corporativa, unidas por design, qualidade e tradição de fabricação própria.</p>
+        <div class="footer-social">
+          <a href="#" class="icon-btn">IG</a>
+          <a href="#" class="icon-btn">FB</a>
+          <a href="#" class="icon-btn">IN</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Sobre</h4>
+        <ul>
+          <li><a href="#">História</a></li>
+          <li><a href="#">Identidade</a></li>
+          <li><a href="#">Nossas fábricas</a></li>
+          <li><a href="#">Sustentabilidade</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Produtos</h4>
+        <ul>
+          <li><a href="#">Área Externa</a></li>
+          <li><a href="#">Estofados</a></li>
+          <li><a href="#">Pedras</a></li>
+          <li><a href="#">Todos os produtos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Recursos</h4>
+        <ul>
+          <li><a href="#">Catálogos</a></li>
+          <li><a href="#">Biblioteca de imagens</a></li>
+          <li><a href="#">Área do revendedor</a></li>
+          <li><button data-modal="faqModal">Perguntas frequentes</button></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Atendimento</h4>
+        <ul>
+          <li><a href="#lojas">Encontre uma loja</a></li>
+          <li><button data-modal="contactModal">Fale conosco</button></li>
+          <li><a href="#">WhatsApp comercial</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-region">
+      <span class="label-mono">Unidade:</span>
+      <div class="regions">
+        <button data-region="MG">Minas Gerais</button>
+        <button data-region="GO">Goiás</button>
+        <button data-region="DF">Distrito Federal</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 BASP</span>
+      <div class="legal-links">
+        <a href="#">Dados da Empresa</a>
+        <a href="#">Responsabilidade Social</a>
+        <a href="#">Termos Legais</a>
+        <a href="#">Política de Privacidade</a>
+        <a href="#">Política de Cookies</a>
+        <a href="#">Acessibilidade</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- Modal system ----------
+  const overlays = document.querySelectorAll('.modal-overlay');
+  function openModal(id){
+    const m = document.getElementById(id);
+    if(!m) return;
+    m.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+  function closeAllModals(){
+    overlays.forEach(o => o.classList.remove('open'));
+    document.body.classList.remove('modal-open');
+  }
+  document.querySelectorAll('[data-modal]').forEach(el => {
+    el.addEventListener('click', (e) => { e.preventDefault(); openModal(el.getAttribute('data-modal')); });
+  });
+  document.querySelectorAll('[data-close]').forEach(el => {
+    el.addEventListener('click', closeAllModals);
+  });
+  overlays.forEach(o => {
+    o.addEventListener('click', (e) => { if(e.target === o) closeAllModals(); });
+  });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeAllModals(); });
+
+  // Region buttons (welcome modal + footer) — persist choice for real deployment
+  document.querySelectorAll('[data-region]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      try{ localStorage.setItem('basp_region', btn.getAttribute('data-region')); }catch(e){}
+      document.querySelectorAll('.regions button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.regions button[data-region="${btn.getAttribute('data-region')}"]`).forEach(b => b.classList.add('active'));
+      closeAllModals();
+    });
+  });
+
+  // Show welcome modal once per session
+  window.addEventListener('load', () => {
+    let seen = false;
+    try{ seen = sessionStorage.getItem('basp_welcome_seen'); }catch(e){}
+    if(!seen){
+      setTimeout(() => { openModal('welcomeModal'); try{ sessionStorage.setItem('basp_welcome_seen','1'); }catch(e){} }, 600);
+    }
+  });
+
+  // ---------- FAQ accordion ----------
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  // ---------- Search bar toggle ----------
+  const searchBar = document.getElementById('searchBar');
+  document.getElementById('searchToggle').addEventListener('click', () => {
+    searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // ---------- Mobile burger ----------
+  const burger = document.getElementById('burgerBtn');
+  const nav = document.querySelector('.main-nav');
+  burger.addEventListener('click', () => {
+    const isOpen = nav.style.display === 'flex';
+    nav.style.display = isOpen ? 'none' : 'flex';
+    nav.style.flexDirection = 'column';
+    nav.style.position = 'absolute';
+    nav.style.top = '72px';
+    nav.style.left = '0';
+    nav.style.right = '0';
+    nav.style.background = '#0d0b09';
+    nav.style.padding = '24px 32px';
+    nav.style.borderBottom = '1px solid rgba(210,175,120,.18)';
+    nav.style.gap = '18px';
+  });
+
+  // ---------- Hero carousel ----------
+  const heroSlides = [
+    { eyebrow:'Coleção 2026', title:'Design que nasce<br>na fábrica, vive<br>no seu espaço.', sub:'Do concreto ao acabamento final — peças assinadas pelas fábricas do grupo BASP.', img:'hero-fiorenza-poente.jpg' },
+    { eyebrow:'Processo criativo', title:'Cada peça começa<br>com um traço,<br>uma ideia.', sub:'Do esboço no papel à bancada da fábrica — o processo por trás de cada produto BASP.', img:'hero-processo-esboco.jpg' },
+    { eyebrow:'Linha Estofados — Basalto', title:'Modular, envolvente<br>e feito para o seu<br>jeito de viver.', sub:'Módulos que se reorganizam com você — conforto que acompanha o espaço.', img:'hero-sofa-basalto.jpg' },
+    { eyebrow:'Linha Estofados — Atmos I', title:'Curvas que convidam<br>a ficar mais<br>um pouco.', sub:'Design orgânico e acabamento macio, pensado para o dia a dia.', img:'hero-sofa-atmos.jpg' }
+  ];
+  let heroIndex = 0;
+  const heroEyebrow = document.getElementById('heroEyebrow');
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSub = document.getElementById('heroSub');
+  const heroImg = document.getElementById('heroImg');
+  const heroDots = document.querySelectorAll('#heroDots button');
+
+  function setHero(i){
+    heroIndex = i;
+    const s = heroSlides[i];
+    heroEyebrow.textContent = s.eyebrow;
+    heroTitle.innerHTML = s.title;
+    heroSub.textContent = s.sub;
+    heroImg.style.opacity = 0;
+    setTimeout(() => { heroImg.src = s.img; heroImg.style.opacity = 1; }, 300);
+    heroDots.forEach(d => d.classList.remove('active'));
+    heroDots[i].classList.add('active');
+  }
+  heroDots.forEach(d => {
+    d.addEventListener('click', () => setHero(parseInt(d.getAttribute('data-i'))));
+  });
+  setInterval(() => { setHero((heroIndex + 1) % heroSlides.length); }, 6000);
+
+  // ---------- Product inspirations accordion ----------
+  document.querySelectorAll('.accordion-panel').forEach(panel => {
+    panel.addEventListener('mouseenter', () => {
+      document.querySelectorAll('.accordion-panel').forEach(p => p.classList.remove('active'));
+      panel.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

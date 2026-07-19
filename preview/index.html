@@ -210,6 +210,33 @@
     100%{transform:scale(1.12) translate(-1.5%, -1%);}
   }
 
+  /* ---------- 3D BLOCK SECTION ---------- */
+  .bloco3d{
+    background:var(--bg-2);
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    padding:100px 0;
+  }
+  .bloco3d-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center;}
+  .bloco3d-video{
+    position:relative; border:1px solid var(--border-strong); border-radius:6px; overflow:hidden;
+    background:#000; box-shadow:0 30px 70px rgba(0,0,0,.5);
+  }
+  .bloco3d-video video{width:100%; height:auto; display:block;}
+  .bloco3d-text .eyebrow{font-family:'Jura',sans-serif; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:14px;}
+  .bloco3d-text h2{font-size:clamp(28px,3.2vw,44px); margin-bottom:20px; line-height:1.06;}
+  .bloco3d-text p{color:rgba(245,240,232,.75); font-size:17px; margin-bottom:16px; max-width:440px;}
+  .bloco3d-text .highlight{color:var(--gold-light); font-style:italic;}
+  .bloco3d-formats{display:flex; gap:10px; flex-wrap:wrap; margin:24px 0 28px;}
+  .bloco3d-formats span{
+    font-family:'Jura',sans-serif; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    border:1px solid var(--border-strong); color:var(--gold-light);
+    padding:6px 14px; border-radius:2px;
+  }
+  @media (max-width:960px){
+    .bloco3d{padding:64px 0;}
+    .bloco3d-grid{grid-template-columns:1fr; gap:32px;}
+  }
+
   /* ---------- SCROLL REVEAL ---------- */
   .reveal{opacity:0; transform:translateY(36px); transition:opacity .9s ease, transform .9s cubic-bezier(.22,1,.36,1);}
   .reveal.visible{opacity:1; transform:translateY(0);}
@@ -747,6 +774,31 @@
           <div class="prod">Poltrona Albatroz</div>
           <div class="meta">Linha Estofados</div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BLOCO 3D ===================== -->
+<section class="bloco3d" id="bloco3d">
+  <div class="container">
+    <div class="bloco3d-grid">
+      <div class="bloco3d-video">
+        <video autoplay muted loop playsinline preload="metadata" poster="poltrona-3d-poster.jpg">
+          <source src="poltrona-3d-web.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="bloco3d-text reveal">
+        <div class="eyebrow">Para arquitetos e especificadores</div>
+        <h2>Do showroom<br>ao seu projeto.</h2>
+        <p>Cada peça BASP tem seu <span class="highlight">bloco 3D</span> pronto para você especificar — com as curvas e medidas exatas do produto real.</p>
+        <p>Baixe, insira na sua planta e apresente ao cliente com fidelidade total.</p>
+        <div class="bloco3d-formats">
+          <span>SketchUp .skp</span>
+          <span>AutoCAD .dwg</span>
+          <span>3ds Max</span>
+        </div>
+        <a href="#especificador" class="btn btn-solid">Baixar o bloco 3D</a>
       </div>
     </div>
   </div>

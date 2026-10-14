@@ -43,7 +43,7 @@
 <main>
   <div class="eyebrow">Lojas parceiras</div>
   <h1>Encontre uma loja perto de você</h1>
-  <p class="lede">Escolha a fábrica que você procura e veja as lojas parceiras que trabalham com ela em Minas Gerais, Goiás e Distrito Federal.</p>
+  <p class="lede">Escolha a fábrica que você procura e veja a loja parceira de referência em cada cidade de Minas Gerais, Goiás e Distrito Federal.</p>
   <div class="busca">
     <div class="campo"><label for="fab">Fábrica</label><select id="fab"></select></div>
     <div class="campo"><label for="uf">Estado</label><select id="uf"></select></div>
@@ -64,7 +64,7 @@ function ufs(){const d=LOJAS[fab.value]||{};opt(uf,['MG','GO','DF'].filter(u=>d[
 function cidades(){const d=LOJAS[fab.value]||{},l=[];for(const u of Object.keys(d)){if(uf.value&&u!==uf.value)continue;for(const c of Object.keys(d[u]))l.push([u+'|'+c,c+' · '+u])}l.sort((a,b)=>a[1].localeCompare(b[1]));opt(cid,l,'Todas as cidades');mostrar()}
 function mostrar(){
   const d=LOJAS[fab.value]||{},cards=[];
-  for(const u of Object.keys(d)){if(uf.value&&u!==uf.value)continue;for(const [c,ls] of Object.entries(d[u])){if(cid.value&&cid.value!==u+'|'+c)continue;for(const n of ls)cards.push([n,c,u])}}
+  for(const u of Object.keys(d)){if(uf.value&&u!==uf.value)continue;for(const [c,ls] of Object.entries(d[u])){if(cid.value&&cid.value!==u+'|'+c)continue;for(const n of ls.slice(0,1))cards.push([n,c,u])}}
   cards.sort((a,b)=>a[1].localeCompare(b[1]));
   res.innerHTML=cards.length?'<div class="grid">'+cards.map(([n,c,u])=>'<div class="card"><div><b>'+n+'</b><span>'+c+' · '+UF[u]+'</span></div><a href="https://www.google.com/maps/search/'+encodeURIComponent(n+' '+c+' '+u)+'" target="_blank" rel="noopener">Ver no mapa</a></div>').join('')+'</div>':'<p class="vazio">Ainda não temos loja parceira listada aqui. <a href="https://wa.me/5534991383001" target="_blank" rel="noopener">Fale com a BASP</a> e indicamos a mais próxima.</p>';
 }

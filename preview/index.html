@@ -535,7 +535,7 @@
               <li><a href="#">Arbosso</a></li>
               <li><a href="#">YBY Design</a></li>
               <li><a href="#">Greice Móveis</a></li>
-              <li><a href="#">Linea — mármore Michelangelo</a></li>
+              <li><a href="#">Linea Top — mármore Michelangelo</a></li>
               <li><a href="#">Delta Interiores — madeira e metal</a></li>
             </ul>
           </div>
@@ -641,7 +641,7 @@
     <button class="modal-close" data-close>✕</button>
     <div class="modal-eyebrow">Fale conosco</div>
     <h3>Como podemos ajudar?</h3>
-    <form onsubmit="return false;">
+    <form id="contactForm" onsubmit="return enviarContatoWhats(this);">
       <div class="field">
         <label>Assunto</label>
         <select>
@@ -764,14 +764,14 @@
         <div class="ph filled"><img src="pedras-mesa-chandelier.jpg" alt="Mesa de jantar em pedra natural, base preta"></div>
         <div class="mosaic-cap">
           <div class="prod">Mesa de jantar — mármore Michelangelo</div>
-          <div class="meta">Linea · mármore Michelangelo italiano e brasileiro</div>
+          <div class="meta">Linea Top · mármore Michelangelo italiano e brasileiro</div>
         </div>
       </div>
       <div class="mosaic-item">
         <div class="ph filled"><img src="pedras-mesa-redonda.jpg" alt="Mesa redonda em mármore preto com veios dourados"></div>
         <div class="mosaic-cap">
           <div class="prod">Mesa redonda — mármore Michelangelo</div>
-          <div class="meta">Linea · mármore Michelangelo italiano e brasileiro</div>
+          <div class="meta">Linea Top · mármore Michelangelo italiano e brasileiro</div>
         </div>
       </div>
       <div class="mosaic-item">
@@ -779,7 +779,7 @@
         <div class="ph filled"><img src="pedras-mesa-lateral.jpg" alt="Mesa de centro redonda em mármore claro"></div>
         <div class="mosaic-cap">
           <div class="prod">Mesa de centro — mármore claro</div>
-          <div class="meta">Linea · mármore Michelangelo italiano e brasileiro</div>
+          <div class="meta">Linea Top · mármore Michelangelo italiano e brasileiro</div>
         </div>
       </div>
       <div class="mosaic-item">
@@ -840,7 +840,7 @@
   <div class="segment-block">
     <div class="ph filled"><img src="pedras-segmento-sala.jpg" alt="Sala de jantar com mesa em mármore e cadeiras estofadas mostarda"></div>
     <div class="segment-caption">
-      <span class="label-mono">Arbosso · YBY · Greice · Linea · Delta</span>
+      <span class="label-mono">Arbosso · YBY · Greice · Linea Top · Delta</span>
       <h3>Sala de Jantar</h3>
       <a href="#" class="btn btn-outline">Descobrir</a>
     </div>
@@ -892,7 +892,7 @@
         <a href="#" class="logo">BASP</a>
         <p>Representação comercial de fábricas selecionadas de mobiliário premium em Minas Gerais, Goiás e Distrito Federal.</p>
         <div class="footer-social">
-          <a href="#" class="icon-btn">IG</a>
+          <a href="https://www.instagram.com/basp.representacoes/" target="_blank" rel="noopener" class="icon-btn" aria-label="Instagram">IG</a>
           <a href="#" class="icon-btn">FB</a>
           <a href="#" class="icon-btn">IN</a>
         </div>
@@ -930,8 +930,8 @@
         <ul>
           <li><a href="#lojas">Encontre uma loja</a></li>
           <li><button data-modal="contactModal">Fale conosco</button></li>
-          <li><a href="#">WhatsApp comercial</a></li>
-          <li><a href="#">Instagram</a></li>
+          <li><a href="https://wa.me/5534991383001" target="_blank" rel="noopener">WhatsApp comercial</a></li>
+          <li><a href="https://www.instagram.com/basp.representacoes/" target="_blank" rel="noopener">Instagram</a></li>
         </ul>
       </div>
     </div>
@@ -1087,5 +1087,15 @@
   });
 </script>
 
+<script>
+function enviarContatoWhats(f){
+  const v = f.querySelectorAll('select, textarea, input');
+  const assunto=v[0].value, msg=v[1].value.trim(), nome=(v[2].value+' '+v[3].value).trim(), email=v[4].value.trim(), unidade=v[5].value;
+  if(!msg || !nome){ alert('Preencha pelo menos seu nome e a mensagem.'); return false; }
+  const texto = 'Olá, vim pelo site da BASP.\n\nAssunto: '+assunto+'\nNome: '+nome+(email?'\nE-mail: '+email:'')+'\nUnidade: '+unidade+'\n\n'+msg;
+  window.open('https://wa.me/5534991383001?text='+encodeURIComponent(texto),'_blank');
+  return false;
+}
+</script>
 </body>
 </html>

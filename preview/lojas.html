@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lojas Parceiras — BASP Representações</title>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jura:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0b09;--ivory:#f5f0e8;--gold:#d2af78;--gold-light:#e8d5a3;--gold-dark:#a8853a;--glass:rgba(245,240,232,0.04);--border:rgba(210,175,120,0.18);--border-strong:rgba(210,175,120,0.35);}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ivory);font-family:'Crimson Pro',Georgia,serif;min-height:100vh}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px max(20px,4vw);border-bottom:1px solid var(--border)}
+  header img{height:38px}
+  header a.voltar{font-family:'Jura',sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);text-decoration:none}
+  main{max-width:1100px;margin:0 auto;padding:64px max(20px,4vw) 90px}
+  .eyebrow{font-family:'Jura',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  h1{font-family:'Italiana',serif;font-weight:400;font-size:clamp(38px,6vw,64px);line-height:1.05;text-wrap:balance}
+  .lede{font-size:20px;color:var(--gold-light);max-width:60ch;margin-top:16px;line-height:1.5}
+  .busca{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:44px 0 36px}
+  .campo{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .campo label{font-family:'Jura',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .campo select{font-family:'Jura',sans-serif;font-size:15px;color:var(--ivory);background:var(--glass);border:1px solid var(--border-strong);border-radius:10px;padding:14px 12px;width:100%}
+  .campo select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .campo select option{background:#0d0b09;color:#f5f0e8}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .card{border:1px solid var(--border);border-radius:12px;background:var(--glass);padding:22px;display:flex;flex-direction:column;gap:14px;transition:border-color .25s,transform .25s}
+  .card:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+  .card b{font-family:'Jura',sans-serif;font-size:17px;font-weight:600;letter-spacing:.03em;display:block}
+  .card span{font-size:16px;color:var(--gold-light)}
+  .card a{font-family:'Jura',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-decoration:none;align-self:flex-start;border-bottom:1px solid currentColor;padding-bottom:2px}
+  .vazio{font-size:20px;color:var(--gold-light);line-height:1.5;max-width:60ch}
+  .vazio a,.rodape a{color:var(--gold)}
+  .rodape{margin-top:56px;padding-top:24px;border-top:1px solid var(--border);font-size:17px;color:var(--gold-light);line-height:1.6}
+  @media(max-width:760px){.busca{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html"><img src="basp-logo.png" alt="BASP"></a>
+  <a class="voltar" href="index.html">Voltar ao site</a>
+</header>
+<main>
+  <div class="eyebrow">Lojas parceiras</div>
+  <h1>Encontre uma loja perto de você</h1>
+  <p class="lede">Escolha a fábrica que você procura e veja as lojas parceiras que trabalham com ela em Minas Gerais, Goiás e Distrito Federal.</p>
+  <div class="busca">
+    <div class="campo"><label for="fab">Fábrica</label><select id="fab"></select></div>
+    <div class="campo"><label for="uf">Estado</label><select id="uf"></select></div>
+    <div class="campo"><label for="cid">Cidade</label><select id="cid"></select></div>
+  </div>
+  <div id="res" aria-live="polite"></div>
+  <p class="rodape">Não encontrou sua cidade? <a href="https://wa.me/5534991383001" target="_blank" rel="noopener">Fale com a BASP pelo WhatsApp</a> e indicamos a loja mais próxima.</p>
+</main>
+<script>
+const LOJAS={"Arbosso": {"GO": {"Goiânia": ["Villa Casa","Casa La Pieta","Arraial Moveis"]},"DF": {"Brasília": ["Casa Barroco","Galpao Brasilia","Casarano"]},"MG": {"Montes Claros": ["Tt Home"],"Paracatu": ["Casa Conceito"],"Patos de Minas": ["Sollaris Interiores"]}},"Artefer Decor": {"GO": {"Goiânia": ["Casa Chique","Villa Casa","Sala E Sila"],"Anápolis": ["Casa Chique"]},"MG": {"Uberlândia": ["Verzate Moveis","Ponto Objeto"],"Paracatu": ["Casa Conceito"]},"DF": {"Brasília": ["German"]}},"Artimage": {"MG": {"Uberlândia": ["Minussi Home","Varanda Living","Carmine"],"Uberaba": ["Reginez","Z'Door Galeria","Design Center"],"Paracatu": ["Casa Conceito"],"São Gotardo": ["Ambientes"],"Ituiutaba": ["Armazem Ituiutaba","Portal"],"Araxá": ["Moblar","Decorar Moveis E Decoracao","Tracos E Lacos"],"Patos de Minas": ["Sofisticasa","Ame Home","Criativa Moveis"],"João Pinheiro": ["Casa Conceito"],"Montes Claros": ["Tt Home","Decorebem"],"Unaí": ["Sandra Interiores"]}},"Delta Interiores": {"GO": {"Goiânia": ["Ovoo","Az Decor","Studio Design"],"Rio Verde": ["Encantalle","Dadiva"]},"MG": {"Uberlândia": ["Conceito Decor","Tempo-Mac","Dione Decoracao De Interiores"],"Patos de Minas": ["Sollaris Interiores","Criativa Moveis"],"Montes Claros": ["Projjeta","Tt Home"],"Araxá": ["Tracos E Lacos"],"Curvelo": ["Valeria Martins Casa"],"Unaí": ["Sandra Interiores"],"Paracatu": ["Casa Conceito"],"Taiobeiras": ["Atempo Mobiliario"],"Uberaba": ["Design Center"],"Araguari": ["Moveral"],"Belo Horizonte": ["Inside"]},"DF": {"Brasília": ["Mood","Galpao Brasilia"]}},"Dettagli": {"GO": {"Goiânia": ["Sala E Sila","Studio Design","Kazan Interiores"],"Rio Verde": ["Dadiva","Brumallo Interiores","Contemplo/Zeig"],"Catalão": ["Muovere Home Design"],"Quirinópolis": ["Hollanda Floricultura E Home Decor"]},"DF": {"Brasília": ["German","Temple Moveis","Mood"]},"MG": {"Uberlândia": ["Verzate Moveis","Ype","Dione Decoracao De Interiores"],"Paracatu": ["Casa Conceito"],"Montes Claros": ["Tt Home","Projjeta"],"Juiz de Fora": ["Domo Moveis"],"Três Corações": ["Jares Móveis e Decorações"],"Patos de Minas": ["Sollaris Interiores"],"Ituiutaba": ["Portal","Armazem Ituiutaba"],"Araxá": ["Tracos E Lacos"],"Unaí": ["Sandra Interiores"],"Patrocínio": ["Status Moveis"],"Taiobeiras": ["Atempo Mobiliario"]}},"Faruk": {"MG": {"Uberlândia": ["Varanda Living","Conceito Decor","Morani"],"Ituiutaba": ["Portal","Armazem Ituiutaba"],"Montes Claros": ["Projjeta","Andrade Center Moveis E Decoracao","Tt Home"],"Araxá": ["Moblar"],"Patos de Minas": ["Criativa Moveis","Sollaris Interiores"],"Curvelo": ["Valeria Martins Casa"],"Salinas": ["Mais Decor Planejados E Decoracoes"],"João Pinheiro": ["Casa Conceito"],"Paracatu": ["Casa Conceito"],"Janaúba": ["Projjeta"]},"GO": {"Goiânia": ["Scala Center","Casa Bonita","Natuzzi"],"Catalão": ["Muovere Home Design"],"Quirinópolis": ["Hollanda Floricultura E Home Decor"],"Rio Verde": ["Encantalle"]},"DF": {"Brasília": ["Cassio Veiga Casa","Prima Linea","Vietto"]}},"Ferrari": {"GO": {"Goiânia": ["Sala E Sila","Casa Chique","Casa Bonita"],"Rio Verde": ["Encantalle","Casa Chique","Casa Chique Outlet - Rio Verde"],"Anápolis": ["Casa Chique","Modelar Interiores"],"Aparecida de Goiânia": ["Casa Chique"],"Cocalzinho de Goiás": ["Casa Nova Peixoto Moveis"],"Silvânia": ["Tramado"],"Vianópolis": ["Casa Flavia"]},"MG": {"Uberlândia": ["Moveral","Casa Mobile","Movel One Magazine"],"Patos de Minas": ["Dmoveis Conceito","Criativa Moveis","Sollaris Interiores"],"Uberaba": ["Moveis Araxa","Casa Bela","Haus Moveis"],"Paracatu": ["Casa Conceito"],"João Pinheiro": ["Casa Conceito","Riviera House"],"Pirapora": ["Mcm Moveis"],"Araguari": ["Moveral"],"Araxá": ["Kamel Magazine","Moblar"],"Unaí": ["Sandra Interiores"],"São Gotardo": ["Ambientes"],"Patrocínio": ["Criativa Moveis"],"Montes Claros": ["Tt Home"],"Ituiutaba": ["Armazem Ituiutaba"],"Coromandel": ["Home Decor"]}},"Gobba Leather": {"MG": {"Uberlândia": ["Ype","Varanda Living"],"Montes Claros": ["Projjeta","Tt Home","Cazza Jardins"],"Belo Horizonte": ["Templum"]},"GO": {"Goiânia": ["Villa Casa","Natuzzi"]}},"Greice Móveis": {"MG": {"Uberlândia": ["Verzate Moveis","Ype","Casa Mobile"],"Patos de Minas": ["Criativa Moveis","Sollaris Interiores"],"Ituiutaba": ["Portal"],"Uberaba": ["Casa Bela","Haus Moveis"],"João Pinheiro": ["Riviera House"],"Paracatu": ["Casa Conceito"],"Araxá": ["Decorar Moveis E Decoracao"],"Janaúba": ["Projjeta"],"Patrocínio": ["Home Decor"]},"DF": {"Brasília": ["German","Casa Bela Moveis Brasilia","Temple Moveis"]},"GO": {"Goiânia": ["Sala E Sila","Casa Chique","Tempus"],"Rio Verde": ["Contemplo/Zeig","Dadiva","Casa Chique"],"Anápolis": ["Casa Chique","Modelar Interiores"],"Aparecida de Goiânia": ["Casa Chique"],"Jataí": ["Casa Decor","Casa Miranda"],"Mineiros": ["Conceitos Interiores Design"]}},"Linea Top": {"GO": {"Goiânia": ["Via Condotti","Studio Design","Sevilla Decor"],"Rio Verde": ["Brumallo Interiores","Encantalle"],"Anápolis": ["Doce Lar"]},"MG": {"Uberlândia": ["Morani","Varanda Living","Conceito Decor"],"Uberaba": ["Design Center"],"Paracatu": ["Casa Conceito"],"Patos de Minas": ["Criativa Moveis"],"Montes Claros": ["Tt Home"],"Unaí": ["Sandra Interiores"],"Ituiutaba": ["Armazem Ituiutaba"]},"DF": {"Brasília": ["German","Cassio Veiga Casa","Casa Barroco"]}},"Reseda": {"MG": {"Uberaba": ["Reginez"],"Uberlândia": ["Varanda Living","Ype"],"Janaúba": ["Projjeta"],"Montes Claros": ["Projjeta"],"Curvelo": ["Valeria Martins Casa"]}},"Via Star": {"MG": {"Uberlândia": ["Tecidos Miramontes","Carmine","Conceito Decor"],"Uberaba": ["Design Center","Reginez","Contemporane Decoracoes"],"Montes Claros": ["Projjeta","Tt Home","Moveis Matos Andrade"],"Patos de Minas": ["Sollaris Interiores","Criativa Moveis","Moyses Cortinas & Persianas"],"Janaúba": ["Projjeta"],"Paracatu": ["Casa Conceito"],"Ituiutaba": ["Portal","Armazem Ituiutaba"],"Unaí": ["Sandra Interiores"],"Araxá": ["Moblar","Kamel Magazine"],"Frutal": ["Pinheiro Moveis"],"Curvelo": ["Valeria Martins Casa"],"São Gotardo": ["Ambientes"],"Monte Carmelo": ["Duarte Casa E Decor"],"Salinas": ["Chez Moveis & Decor","Mais Decor Planejados E Decoracoes"],"Patrocínio": ["Status Moveis"],"Pirapora": ["Casali Interiores"]}},"Villa Imperial": {"GO": {"Goiânia": ["Legado Galeria","Ovoo","Studio Design"],"Anápolis": ["Casa De Arruda"]},"MG": {"Uberlândia": ["Dione Decoracao De Interiores","Ulian Moveis","Varanda Living"],"Montes Claros": ["Tt Home","Projjeta"],"Nova Lima": ["Wm Villa"],"Ituiutaba": ["Portal"],"Belo Horizonte": ["Inside"]},"DF": {"Brasília": ["Nexus Mobilia","Mood","Lagom Moveis E Desing"],"Guará": ["Spazio Interni"]}},"YBY Design": {"GO": {"Goiânia": ["Oly Interiores","Arraial Moveis","Cenario"]},"DF": {"Brasília": ["Mood","Mainline Bsb"]},"MG": {"Uberlândia": ["Varanda Living","Portal","Morani"],"Montes Claros": ["Projjeta","Cazza Jardins","Tt Home"],"Uberaba": ["Design Center"],"Unaí": ["Sandra Interiores"],"Paracatu": ["Casa Conceito"],"São Gotardo": ["Ambientes"],"Curvelo": ["Valeria Martins Casa"],"Ituiutaba": ["Portal"]}}};
+const UF={MG:'Minas Gerais',GO:'Goiás',DF:'Distrito Federal'};
+const fab=document.getElementById('fab'),uf=document.getElementById('uf'),cid=document.getElementById('cid'),res=document.getElementById('res');
+const opt=(el,itens,todos)=>{el.innerHTML=(todos?'<option value="">'+todos+'</option>':'')+itens.map(([v,t])=>'<option value="'+v+'">'+t+'</option>').join('')};
+opt(fab,Object.keys(LOJAS).sort((a,b)=>a.localeCompare(b)).map(f=>[f,f]));
+const pedida=decodeURIComponent((location.hash||'').slice(1)).toLowerCase();
+const achada=Object.keys(LOJAS).find(f=>f.toLowerCase().replace(/\s+/g,'-')===pedida); if(achada) fab.value=achada;
+function ufs(){const d=LOJAS[fab.value]||{};opt(uf,['MG','GO','DF'].filter(u=>d[u]).map(u=>[u,UF[u]]),'Todos os estados');cidades()}
+function cidades(){const d=LOJAS[fab.value]||{},l=[];for(const u of Object.keys(d)){if(uf.value&&u!==uf.value)continue;for(const c of Object.keys(d[u]))l.push([u+'|'+c,c+' · '+u])}l.sort((a,b)=>a[1].localeCompare(b[1]));opt(cid,l,'Todas as cidades');mostrar()}
+function mostrar(){
+  const d=LOJAS[fab.value]||{},cards=[];
+  for(const u of Object.keys(d)){if(uf.value&&u!==uf.value)continue;for(const [c,ls] of Object.entries(d[u])){if(cid.value&&cid.value!==u+'|'+c)continue;for(const n of ls)cards.push([n,c,u])}}
+  cards.sort((a,b)=>a[1].localeCompare(b[1]));
+  res.innerHTML=cards.length?'<div class="grid">'+cards.map(([n,c,u])=>'<div class="card"><div><b>'+n+'</b><span>'+c+' · '+UF[u]+'</span></div><a href="https://www.google.com/maps/search/'+encodeURIComponent(n+' '+c+' '+u)+'" target="_blank" rel="noopener">Ver no mapa</a></div>').join('')+'</div>':'<p class="vazio">Ainda não temos loja parceira listada aqui. <a href="https://wa.me/5534991383001" target="_blank" rel="noopener">Fale com a BASP</a> e indicamos a mais próxima.</p>';
+}
+fab.addEventListener('change',ufs);uf.addEventListener('change',cidades);cid.addEventListener('change',mostrar);
+ufs();
+</script>
+</body>
+</html>
